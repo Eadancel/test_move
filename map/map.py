@@ -32,5 +32,5 @@ class Map:
                 y1 +=1
             path.append([x1,y1])
 
-        print (path)
+        #print (path)
         return path

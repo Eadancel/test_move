@@ -14,13 +14,14 @@ class Game:
         self.win = pygame.display.set_mode((self.width, self.height))
         self.peoples = [Worker(5,2,self.map), Worker(10,4,self.map)] 
         self.tasks = deque([])
+        self.tasks_doing = deque([])
         self.bg = pygame.image.load(os.path.join("game_assets","bg.png"))
         
     def run (self):
         run = True
         clock = pygame.time.Clock()
         while run:
-            clock.tick(30)
+            clock.tick(60)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run=False
@@ -34,8 +35,13 @@ class Game:
         for p in self.peoples:
             p.draw(self.win)
             if p.type_person == People.TYPE_WORKER and p.status == People.STATUS_IDLE and len(self.tasks)>0 :
-                p.assignTask(self.tasks.popleft())
+                tsk = self.tasks.popleft()
+                tsk.status = Task.STATUS_DOING
+                p.assignTask(tsk)
+                self.tasks_doing.append(tsk)
         for t in self.tasks:
+            t.draw(self.win, self.map)
+        for t in self.tasks_doing:
             t.draw(self.win, self.map)
         pygame.display.update()
 

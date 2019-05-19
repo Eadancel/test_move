@@ -1,6 +1,7 @@
 
 import pygame
-
+import math
+from map.task import Task
 from collections import deque
 class People:
     imgs = []
@@ -10,6 +11,15 @@ class People:
     STATUS_IDLE = 0
     STATUS_GOINGTO = 1
     STATUS_WORKING = 2
+
+    DIREC_MOVING_STAY = 0
+    DIREC_MOVING_UP = 1
+    DIREC_MOVING_DOWN = 2
+    DIREC_MOVING_LEFT = 3
+    DIREC_MOVING_RIGHT = 4
+
+    FREQ_ANIMATION = 30
+
     def __init__(self, x, y, type_person,map):
         self.x = x
         self.y = y
@@ -25,15 +35,19 @@ class People:
         self.currentPath = deque([])
         self.nextPos = None
         self.velocity = 100
+        self.working_force = 100 
+        self.direcMoving = People.DIREC_MOVING_STAY
     def draw(self, win):
         """
         draw the people
         """
-        
-        self.img = self.imgs[self.animation_count]
+       
+        idx = math.trunc( self.animation_count/(People.FREQ_ANIMATION/len(self.imgs)))
+
+        self.img = self.imgs[idx]
         self.animation_count += 1
         
-        if self.animation_count >= len(self.imgs):
+        if self.animation_count >=  People.FREQ_ANIMATION - 1:
             self.animation_count = 0 
         win.blit(self.img, (self.xGrid, self.yGrid))
         self.do()
@@ -48,44 +62,57 @@ class People:
             self.move()
         elif  self.status == People.STATUS_WORKING:
             self.working()
+
     def getNextTask(self):
         self.currentTask = self.tasks.popleft()
         self.status = People.STATUS_GOINGTO
         self.currentPath = self.map.getPathFromTo(self.x, self.y, self.currentTask.x, self.currentTask.y)
+
     def move(self):
         if len(self.currentPath)>0 and self.nextPos==None:
             self.nextPos=self.currentPath.popleft()
         if self.nextPos!=None :
             self.moveTo()
         else:
-            self.status = People.STATUS_IDLE
+            self.status = People.STATUS_WORKING
         
-    def working(self):
-        pass
+    def working(self):        
+        self.currentTask.duration-=self.working_force/100
+        if self.currentTask.duration<=0:
+            self.currentTask.status=Task.STATUS_DONE
+            self.status=People.STATUS_IDLE
+
+        
     def moveTo(self):
         nextXGrid = self.map.convertXGridToPX(self.nextPos[0])
         nextYGrid = self.map.convertYGridToPX(self.nextPos[1])
         # print("moving to {} {} - {} {}".format(nextXGrid,nextYGrid,self.nextPos[0],self.nextPos[1]))
         # print("on position {} {}".format(self.xGrid,self.yGrid))
-        
+        if self.y<self.nextPos[1]:
+            self.direcMoving = People.DIREC_MOVING_DOWN
+            self.yGrid+=self.velocity/100
+        elif self.y>self.nextPos[1]:
+            self.direcMoving = People.DIREC_MOVING_UP
+            self.yGrid-=self.velocity/100
+
         if self.x<self.nextPos[0]:
             self.xGrid+=self.velocity/100
+            self.direcMoving = People.DIREC_MOVING_RIGHT
         elif self.x>self.nextPos[0]:
+            self.direcMoving = People.DIREC_MOVING_LEFT
             self.xGrid-=self.velocity/100
+
+
+        if abs(self.yGrid-nextYGrid)<2:
+            self.y=self.nextPos[1]
+            self.yGrid=nextYGrid   
         if abs(self.xGrid-nextXGrid)<2:
             self.x=self.nextPos[0]
             self.xGrid=nextXGrid
-
-        if self.y<self.nextPos[1]:
-            self.yGrid+=self.velocity/100
-        elif self.y<self.nextPos[1]:
-            self.yGrid-=self.velocity/100
-        if abs(self.yGrid-nextYGrid)<2:
-            self.y=self.nextPos[1]
-            self.yGrid=nextYGrid
-        
+       
         if self.x==self.nextPos[0] and self.y==self.nextPos[1]:
             self.nextPos=None
+            
         
         
 
