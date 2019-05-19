@@ -1,3 +1,4 @@
-from game import Game as game
+from game import Game 
 
-game.run
+g = Game ()
+g.run()

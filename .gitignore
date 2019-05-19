@@ -1,1 +1,5 @@
 env/
+.vscode/
+__pycache__/
+__pycache__/game.cpython-37.pyc
+.gitignore
