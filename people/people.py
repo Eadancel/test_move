@@ -41,10 +41,9 @@ class People:
         """
         draw the people
         """
-       
-        idx = math.trunc( self.animation_count/(People.FREQ_ANIMATION/len(self.imgs)))
+        idx = math.trunc( self.animation_count/(People.FREQ_ANIMATION/len(self.imgs[self.direcMoving])))
 
-        self.img = self.imgs[idx]
+        self.img = self.imgs[self.direcMoving][idx]
         self.animation_count += 1
         
         if self.animation_count >=  People.FREQ_ANIMATION - 1:
@@ -53,20 +52,7 @@ class People:
         self.do()
 
     def assignTask(self, tsk):
-        print ("adding task")
         self.tasks.append(tsk)
-    def do(self):
-        if self.status == People.STATUS_IDLE and len(self.tasks)>0:
-            self.getNextTask()
-        elif  self.status == People.STATUS_GOINGTO:
-            self.move()
-        elif  self.status == People.STATUS_WORKING:
-            self.working()
-
-    def getNextTask(self):
-        self.currentTask = self.tasks.popleft()
-        self.status = People.STATUS_GOINGTO
-        self.currentPath = self.map.getPathFromTo(self.x, self.y, self.currentTask.x, self.currentTask.y)
 
     def move(self):
         if len(self.currentPath)>0 and self.nextPos==None:
@@ -75,13 +61,6 @@ class People:
             self.moveTo()
         else:
             self.status = People.STATUS_WORKING
-        
-    def working(self):        
-        self.currentTask.duration-=self.working_force/100
-        if self.currentTask.duration<=0:
-            self.currentTask.status=Task.STATUS_DONE
-            self.status=People.STATUS_IDLE
-
         
     def moveTo(self):
         nextXGrid = self.map.convertXGridToPX(self.nextPos[0])
@@ -111,6 +90,7 @@ class People:
             self.xGrid=nextXGrid
        
         if self.x==self.nextPos[0] and self.y==self.nextPos[1]:
+            self.direcMoving = People.DIREC_MOVING_STAY
             self.nextPos=None
             
         
