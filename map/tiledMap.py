@@ -4,19 +4,27 @@ import pytmx
 
 class TiledMap():
     """ This is creating the surface on which you make the draw updates """
+    walkableTiles = []
     def __init__(self, pathMap):
         self.gameMap = pytmx.load_pygame(pathMap, pixelalpha=True)
         self.mapwidth = self.gameMap.tilewidth * self.gameMap.width
         self.mapheight = self.gameMap.tileheight * self.gameMap.height
 
     def render(self, surface):
-        for layer in self.gameMap.visible_layers:
+        for layer in self.gameMap.layers:
             if isinstance(layer, pytmx.TiledTileLayer):
-                for x, y, gid in layer:
-                    tile = self.gameMap.get_tile_image_by_gid(gid)
-                    if tile:
-                        surface.blit(tile, (x * self.gameMap.tilewidth, y * self.gameMap.tileheight))
+                if layer.visible :
+                    for x, y, gid in layer:
+                        tile = self.gameMap.get_tile_image_by_gid(gid)
+                        if tile:
+                            surface.blit(tile, (x * self.gameMap.tilewidth, y * self.gameMap.tileheight))
+                else:
+                    if layer.name=="walkable":
+                        #self.walkableTiles=[[False]*self.gameMap.width]*self.gameMap.height
+                        self.walkableTiles= [[] for i in range(self.gameMap.height)]
 
+                        for x, y, gid in layer:
+                            self.walkableTiles[y].append(gid!=0)
     def make_map(self):
         mapSurface = pygame.Surface((self.mapwidth, self.mapheight))
         self.render(mapSurface)

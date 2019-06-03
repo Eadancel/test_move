@@ -11,17 +11,17 @@ from collections import deque
 
 class Game:
     def __init__(self):
-        
+
         self.runDisplay = Display("mapaReducido.tmx")
 
-        self.win = self.runDisplay.displayWindow  
+        self.win = self.runDisplay.displayWindow
 
-        self.map = Map(16,16)
-        self.peoples = [Worker(5,2,self.map), Worker(10,4,self.map)] 
+        self.map = Map(self.runDisplay.map.gameMap.tilewidth,self.runDisplay.map.gameMap.tileheight, self.runDisplay.map.walkableTiles)
+        self.peoples = [Worker(5,2,self.map), Worker(10,4,self.map)]
         self.tasks = deque([])
         self.tasks_doing = deque([])
         #self.bg = pygame.image.load(os.path.join("game_assets","bg.png"))
-        
+
     def run (self):
         run = True
         while run:
@@ -53,5 +53,8 @@ class Game:
     def addTaskAt(self, pos):
         xGrid = self.map.convertPXToXGrid(pos[0])
         yGrid = self.map.convertPXToYGrid(pos[1])
-        self.tasks.append(Task(xGrid, yGrid,20))
-        #print("{} {}".format(xGrid, yGrid ))
+        if self.map.isWalkable(xGrid,yGrid):
+            self.tasks.append(Task(xGrid, yGrid,20))
+            #print("{} {}".format(xGrid, yGrid ))
+        else:
+            print("not walkable {} {}".format(xGrid,yGrid))

@@ -19,9 +19,9 @@ class Worker (People):
         super().__init__(x,y,People.TYPE_WORKER,map)
         self.imgs = []
         for i in range(5):
-            self.imgs.append([])       
+            self.imgs.append([])
             for pi in pathimgs_status[i]:
-                self.imgs[i].append(pygame.image.load(os.path.join("game_assets\Tiles",pi)))
+                self.imgs[i].append(pygame.image.load(os.path.join("game_assets/Tiles",pi)))
 
     def do(self):
         if self.status == People.STATUS_IDLE and len(self.tasks)>0:
@@ -35,8 +35,8 @@ class Worker (People):
         self.currentTask = self.tasks.popleft()
         self.status = People.STATUS_GOINGTO
         self.currentPath = self.map.getPathFromTo(self.x, self.y, self.currentTask.x, self.currentTask.y)
-    
-    def working(self):        
+
+    def working(self):
         self.currentTask.workingOn(self.working_force)
         if self.currentTask.status == Task.STATUS_DONE:
             self.status=People.STATUS_IDLE
