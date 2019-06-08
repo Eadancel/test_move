@@ -35,7 +35,7 @@ class People:
         self.currentPath = deque([])
         self.nextPos = None
         self.velocity = 100
-        self.working_force = 100 
+        self.working_force = 100
         self.direcMoving = People.DIREC_MOVING_STAY
     def draw(self, win):
         """
@@ -45,9 +45,9 @@ class People:
 
         self.img = self.imgs[self.direcMoving][idx]
         self.animation_count += 1
-        
+
         if self.animation_count >=  People.FREQ_ANIMATION - 1:
-            self.animation_count = 0 
+            self.animation_count = 0
         win.blit(self.img, (self.xGrid, self.yGrid))
         self.do()
 
@@ -56,12 +56,12 @@ class People:
 
     def move(self):
         if len(self.currentPath)>0 and self.nextPos==None:
-            self.nextPos=self.currentPath.popleft()
+            self.nextPos=self.currentPath.pop(0)
         if self.nextPos!=None :
             self.moveTo()
         else:
             self.status = People.STATUS_WORKING
-        
+
     def moveTo(self):
         nextXGrid = self.map.convertXGridToPX(self.nextPos[0])
         nextYGrid = self.map.convertYGridToPX(self.nextPos[1])
@@ -84,15 +84,15 @@ class People:
 
         if abs(self.yGrid-nextYGrid)<2:
             self.y=self.nextPos[1]
-            self.yGrid=nextYGrid   
+            self.yGrid=nextYGrid
         if abs(self.xGrid-nextXGrid)<2:
             self.x=self.nextPos[0]
             self.xGrid=nextXGrid
-       
+
         if self.x==self.nextPos[0] and self.y==self.nextPos[1]:
             self.direcMoving = People.DIREC_MOVING_STAY
             self.nextPos=None
-            
-        
-        
+
+
+
 

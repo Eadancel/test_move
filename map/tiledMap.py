@@ -24,7 +24,8 @@ class TiledMap():
                         self.walkableTiles= [[] for i in range(self.gameMap.height)]
 
                         for x, y, gid in layer:
-                            self.walkableTiles[y].append(gid!=0)
+                            self.walkableTiles[y].append(gid)
+        print("w{} h{}".format(len(self.walkableTiles), len(self.walkableTiles[0])))
     def make_map(self):
         mapSurface = pygame.Surface((self.mapwidth, self.mapheight))
         self.render(mapSurface)

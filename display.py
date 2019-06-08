@@ -13,7 +13,7 @@ class Display():
         self.pathMap = pathMap
         self.map = TiledMap(self.pathMap)
         self.map_img = self.map.make_map()
-        print(self.map.walkableTiles)
+        #print(self.map.walkableTiles)
 
     def update(self):
 
