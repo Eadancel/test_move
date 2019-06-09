@@ -17,7 +17,7 @@ class Game:
         self.win = self.runDisplay.displayWindow
 
         self.map = Map(self.runDisplay.map.gameMap.tilewidth,self.runDisplay.map.gameMap.tileheight, self.runDisplay.map.walkableTiles)
-        self.peoples = [Worker(5,2,self.map), Worker(10,4,self.map)]
+        self.peoples = [Worker(5,2,self.map), Worker(10,4,self.map),Worker(6,4,self.map), Worker(1,4,self.map)]
         self.tasks = deque([])
         self.tasks_doing = deque([])
         #self.bg = pygame.image.load(os.path.join("game_assets","bg.png"))

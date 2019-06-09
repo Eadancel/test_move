@@ -34,7 +34,7 @@ class People:
         self.currentTask = None
         self.currentPath = deque([])
         self.nextPos = None
-        self.velocity = 100
+        self.velocity = 120
         self.working_force = 100
         self.direcMoving = People.DIREC_MOVING_STAY
     def draw(self, win):

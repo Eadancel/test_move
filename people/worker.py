@@ -37,7 +37,7 @@ class Worker (People):
         #self.currentPath = self.map.getPathFromTo(self.x, self.y, self.currentTask.x, self.currentTask.y)
         #self.currentPath = self.map.getWalkablePathFromTo(self.x, self.y, self.currentTask.x, self.currentTask.y)
         self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, self.currentTask.x, self.currentTask.y)
-        print(self.currentPath)
+        #print(self.currentPath)
 
     def working(self):
         self.currentTask.workingOn(self.working_force)
