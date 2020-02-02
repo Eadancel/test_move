@@ -37,6 +37,7 @@ class People:
         self.velocity = 120
         self.working_force = 100
         self.direcMoving = People.DIREC_MOVING_STAY
+        self.obj=None
     def draw(self, win):
         """
         draw the people
@@ -48,8 +49,11 @@ class People:
 
         if self.animation_count >=  People.FREQ_ANIMATION - 1:
             self.animation_count = 0
-        win.blit(self.img, (self.xGrid, self.yGrid))
+
         self.do()
+        win.blit(self.img, (self.xGrid, self.yGrid))
+        if self.obj!=None:
+            self.obj.drawOn(win,self.xGrid-5, self.yGrid)
 
     def assignTask(self, tsk):
         self.tasks.append(tsk)
@@ -60,7 +64,7 @@ class People:
         if self.nextPos!=None :
             self.moveTo()
         else:
-            self.status = People.STATUS_WORKING
+            self.status = People.STATUS_IDLE
 
     def moveTo(self):
         nextXGrid = self.map.convertXGridToPX(self.nextPos[0])
@@ -92,7 +96,9 @@ class People:
         if self.x==self.nextPos[0] and self.y==self.nextPos[1]:
             self.direcMoving = People.DIREC_MOVING_STAY
             self.nextPos=None
-
+        if self.obj!=None:
+            self.obj.x=self.x
+            self.obj.y=self.y
 
 
 

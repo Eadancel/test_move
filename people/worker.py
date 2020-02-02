@@ -2,6 +2,7 @@ import pygame
 import os
 import people
 from map.task import Task
+from map.action import Action
 from .people import People
     # DIREC_MOVING_STAY = 0
     # DIREC_MOVING_UP = 1
@@ -24,7 +25,7 @@ class Worker (People):
                 self.imgs[i].append(pygame.image.load(os.path.join("game_assets/Tiles",pi)))
 
     def do(self):
-        if self.status == People.STATUS_IDLE and len(self.tasks)>0:
+        if self.status == People.STATUS_IDLE:
             self.getNextTask()
         elif  self.status == People.STATUS_GOINGTO:
             self.move()
@@ -32,11 +33,29 @@ class Worker (People):
             self.working()
 
     def getNextTask(self):
-        self.currentTask = self.tasks.popleft()
-        self.status = People.STATUS_GOINGTO
-        #self.currentPath = self.map.getPathFromTo(self.x, self.y, self.currentTask.x, self.currentTask.y)
-        #self.currentPath = self.map.getWalkablePathFromTo(self.x, self.y, self.currentTask.x, self.currentTask.y)
-        self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, self.currentTask.x, self.currentTask.y)
+        if (self.currentTask==None or len(self.currentTask.solution)<=0):
+            if len(self.tasks)>0 :
+                self.currentTask = self.tasks.popleft()
+            else:
+                return
+
+        action = self.currentTask.solution.popleft()
+        if action["type"]==Action.TYPE_GOTO_X_Y:
+            self.status = People.STATUS_GOINGTO
+            self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, action["x"], action["y"])
+        elif action["type"]==Action.TYPE_GOTO_ZONE:
+            self.status = People.STATUS_GOINGTO
+            (x_zone,y_zone)=self.map.getEmptySpotOnZone(action["zone"])
+            if x_zone>0 and y_zone>0:
+                self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, x_zone, y_zone)
+            else:
+                print("Zone FULL")
+        elif action["type"]==Action.TYPE_TAKE_OBJ:
+            self.obj=action["obj"]
+            self.obj.grabbed=True
+        elif action["type"]==Action.TYPE_RELEASE_OBJ:
+            self.obj.grabbed=False
+            self.obj=None
         #print(self.currentPath)
 
     def working(self):

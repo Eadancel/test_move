@@ -21,12 +21,12 @@ class Node():
         return self.position == other.position
 
 class Map:
-    def __init__(self, xGrid, yGrid, walkableTiles):
+    def __init__(self, xGrid, yGrid, walkableTiles, zones):
         self.xGrid = xGrid
         self.yGrid = yGrid
         self.tasks = []
         self.walkableTiles = walkableTiles
-
+        self.zones = zones
 
     def convertXGridToPX(self, pos):
         return pos*self.xGrid
@@ -37,7 +37,11 @@ class Map:
         return math.trunc(px/self.xGrid)
     def convertPXToYGrid(self, px):
         return math.trunc(px/self.yGrid)
-
+    def getEmptySpotOnZone(self,zone):
+        if len(self.zones[zone])>0:
+            return self.zones[zone].popleft()
+        else:
+            return (0,0)
     def isWalkable(self, x,y):
         #print("checking {} {}".format(x,y))
         return self.walkableTiles[y][x]
