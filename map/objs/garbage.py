@@ -19,6 +19,7 @@ class Garbage(Objects):
 
            { "type":Action.TYPE_GOTO_ZONE,
              "zone" :"garbage_zone",
+             "drop" : True
              },
             {  "type":Action.TYPE_RELEASE_OBJ
             }

@@ -4,6 +4,7 @@ import people
 from map.task import Task
 from map.action import Action
 from .people import People
+import random
     # DIREC_MOVING_STAY = 0
     # DIREC_MOVING_UP = 1
     # DIREC_MOVING_DOWN = 2
@@ -37,15 +38,21 @@ class Worker (People):
             if len(self.tasks)>0 :
                 self.currentTask = self.tasks.popleft()
             else:
+                self.assignTask(Task([{"type":Action.TYPE_GOTO_ZONE,"zone":"rest_zone","drop":False,"velocity":0.5}],random.randint(1,20)))
                 return
 
         action = self.currentTask.solution.popleft()
+        if "velocity" in action:
+            self.velocity_modif=action["velocity"]
+        else:
+            self.velocity_modif=1
+
         if action["type"]==Action.TYPE_GOTO_X_Y:
             self.status = People.STATUS_GOINGTO
             self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, action["x"], action["y"])
         elif action["type"]==Action.TYPE_GOTO_ZONE:
             self.status = People.STATUS_GOINGTO
-            (x_zone,y_zone)=self.map.getEmptySpotOnZone(action["zone"])
+            (x_zone,y_zone)=self.map.getEmptySpotOnZone(action["zone"], action["drop"])
             if x_zone>0 and y_zone>0:
                 self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, x_zone, y_zone)
             else:

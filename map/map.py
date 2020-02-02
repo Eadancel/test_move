@@ -1,6 +1,7 @@
 import math
 
 from collections import deque
+from random import sample
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
@@ -37,9 +38,12 @@ class Map:
         return math.trunc(px/self.xGrid)
     def convertPXToYGrid(self, px):
         return math.trunc(px/self.yGrid)
-    def getEmptySpotOnZone(self,zone):
+    def getEmptySpotOnZone(self,zone,drop=True):
         if len(self.zones[zone])>0:
-            return self.zones[zone].popleft()
+            if drop:
+                return self.zones[zone].popleft()
+            else:
+                return sample(self.zones[zone],1)[0]
         else:
             return (0,0)
     def isWalkable(self, x,y):

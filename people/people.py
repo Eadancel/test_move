@@ -35,6 +35,7 @@ class People:
         self.currentPath = deque([])
         self.nextPos = None
         self.velocity = 120
+        self.velocity_modif = 1
         self.working_force = 100
         self.direcMoving = People.DIREC_MOVING_STAY
         self.obj=None
@@ -67,23 +68,24 @@ class People:
             self.status = People.STATUS_IDLE
 
     def moveTo(self):
+        veloc = self.velocity * self.velocity_modif
         nextXGrid = self.map.convertXGridToPX(self.nextPos[0])
         nextYGrid = self.map.convertYGridToPX(self.nextPos[1])
         # print("moving to {} {} - {} {}".format(nextXGrid,nextYGrid,self.nextPos[0],self.nextPos[1]))
         # print("on position {} {}".format(self.xGrid,self.yGrid))
         if self.y<self.nextPos[1]:
             self.direcMoving = People.DIREC_MOVING_DOWN
-            self.yGrid+=self.velocity/100
+            self.yGrid+=veloc/100
         elif self.y>self.nextPos[1]:
             self.direcMoving = People.DIREC_MOVING_UP
-            self.yGrid-=self.velocity/100
+            self.yGrid-=veloc/100
 
         if self.x<self.nextPos[0]:
-            self.xGrid+=self.velocity/100
+            self.xGrid+=veloc/100
             self.direcMoving = People.DIREC_MOVING_RIGHT
         elif self.x>self.nextPos[0]:
             self.direcMoving = People.DIREC_MOVING_LEFT
-            self.xGrid-=self.velocity/100
+            self.xGrid-=veloc/100
 
 
         if abs(self.yGrid-nextYGrid)<2:
