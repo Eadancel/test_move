@@ -48,7 +48,7 @@ class Game:
         for p in self.peoples:
             p.draw(self.win)
 
-            if p.type_person == People.TYPE_WORKER and p.status == People.STATUS_IDLE and len(self.tasks)>0 :
+            if p.type_person == People.TYPE_WORKER and p.openForTask and len(self.tasks)>0 :
                 tsk = self.tasks.popleft()
                 tsk.status = Task.STATUS_DOING
                 p.assignTask(tsk)
