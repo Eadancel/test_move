@@ -21,7 +21,6 @@ class TiledMap():
                             surface.blit(tile, (x * self.gameMap.tilewidth, y * self.gameMap.tileheight))
                 else:
                     if layer.name=="walkable":
-                        print("walkable")
                         #self.walkableTiles=[[False]*self.gameMap.width]*self.gameMap.height
                         self.walkableTiles= [[] for i in range(self.gameMap.height)]
 
