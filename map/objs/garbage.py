@@ -25,4 +25,3 @@ class Garbage(Objects):
             }
         ]
         self.task = Task(solution,random.randint(1,20))
-        self.status=0

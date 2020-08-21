@@ -10,15 +10,15 @@ import random
     # DIREC_MOVING_DOWN = 2
     # DIREC_MOVING_LEFT = 3
     # DIREC_MOVING_RIGHT = 4
-pathimgs_status = (["tile_0267.png"],
-                   ["tile_0268.png","tile_0295.png","tile_0322.png"],
-                   ["tile_0267.png","tile_0294.png","tile_0321.png"],
-                   ["tile_0266.png","tile_0293.png","tile_0320.png"],
-                   ["tile_0269.png","tile_0296.png","tile_0323.png"])
+pathimgs_status = (["tile_0186.png"],
+                   ["tile_0214.png","tile_0187.png","tile_0241.png"],
+                   ["tile_0213.png","tile_0186.png","tile_0240.png"],
+                   ["tile_0212.png","tile_0185.png","tile_0239.png"],
+                   ["tile_0215.png","tile_0188.png","tile_0242.png"])
 
-class Worker (People):
+class Customer (People):
     def __init__(self,x,y,map):
-        super().__init__(x,y,People.TYPE_WORKER,map)
+        super().__init__(x,y,People.TYPE_CUSTOMER,map)
         self.imgs = []
         self.openForTask=True
 
@@ -35,12 +35,6 @@ class Worker (People):
         elif self.current_action["type"]==Action.TYPE_RELEASE_OBJ:
             self.obj.grabbed=False
             self.obj=None
-        elif self.current_action["type"]==Action.TYPE_MAKE_VISIBLE:
-            print("making invisible: {}".format(self.current_action["visible"]))
-            self.current_action["obj"].visible = self.current_action["visible"]
-            self.obj=None
-        elif self.current_action["type"]==Action.TYPE_RESTORE:
-            self.map.restoreSpotZone(self.current_action["x"],self.current_action["y"],self.current_action["zone"])
         #print(self.currentPath)
 
     def working(self):
@@ -50,4 +44,6 @@ class Worker (People):
         else:
             self.status=People.STATUS_WORKING
     def getDefaultTask(self):
-        return Task([{"type":Action.TYPE_GOTO_ZONE,"zone":"rest_zone","canInterrup":True,"drop":False,"velocity":0.5}],random.randint(1,20))
+        return Task([{"type":Action.TYPE_GOTO_ZONE,"zone":"walkable","canInterrup":True,"drop":False,"velocity":0.7}],random.randint(1,20))
+    def gotGarbage(self):
+        return random.randint(0,5000)<10

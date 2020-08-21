@@ -3,10 +3,11 @@ import pygame
 import math
 from map.task import Task
 from collections import deque
+from map.action import Action
 class People:
     imgs = []
     TYPE_WORKER = 1
-    TYPE_PEDESTRIAN = 2
+    TYPE_CUSTOMER = 2
 
     STATUS_IDLE = 0
     STATUS_GOINGTO = 1
@@ -39,6 +40,7 @@ class People:
         self.working_force = 100
         self.direcMoving = People.DIREC_MOVING_STAY
         self.obj=None
+        self.default_Task = None
     def draw(self, win):
         """
         draw the people
@@ -55,6 +57,17 @@ class People:
         win.blit(self.img, (self.xGrid, self.yGrid))
         if self.obj!=None:
             self.obj.drawOn(win,self.xGrid-5, self.yGrid)
+
+    def do(self):
+        #print ("tasks:{}".format(len(self.tasks)))
+        if self.status == People.STATUS_IDLE or (self.openForTask and len(self.tasks)>0):
+            self.getNextTask()
+        elif  self.status == People.STATUS_GOINGTO:
+            #print(self.openForTask)
+            #print ("tasks:{}".format(len(self.tasks)))
+            self.move()
+        elif  self.status == People.STATUS_WORKING:
+            self.working()
 
     def assignTask(self, tsk):
         self.tasks.append(tsk)
@@ -102,5 +115,37 @@ class People:
             self.obj.x=self.x
             self.obj.y=self.y
 
+    def getNextTask(self):
+        if (self.currentTask==None or len(self.currentTask.solution)<=0):
+            if len(self.tasks)>0 :
+                self.currentTask = self.tasks.popleft()
+            else:
+                self.currentTask = self.getDefaultTask()
+           #     return
+        self.current_action = self.currentTask.solution.popleft()
+
+        if "canInterrup" in self.current_action:
+            self.openForTask=self.current_action["canInterrup"]
+        else:
+            self.openForTask=False
+
+        if "velocity" in self.current_action:
+            self.velocity_modif=self.current_action["velocity"]
+        else:
+            self.velocity_modif=1
+
+        if self.current_action["type"]==Action.TYPE_GOTO_X_Y:
+            self.status = People.STATUS_GOINGTO
+            self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, self.current_action["x"], self.current_action["y"])
+
+        elif self.current_action["type"]==Action.TYPE_GOTO_ZONE:
+            self.status = People.STATUS_GOINGTO
+            (x_zone,y_zone)=self.map.getEmptySpotOnZone(self.current_action["zone"], self.current_action["drop"])
+            if x_zone>0 and y_zone>0:
+                self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, x_zone, y_zone)
+            else:
+                print("Zone FULL")
+        elif self.current_action["type"]==Action.TYPE_SET_STATUS:
+            self.current_action["obj"].status = self.current_action["status"]
 
 

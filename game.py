@@ -4,9 +4,13 @@ import pytmx
 from pytmx.util_pygame import load_pygame
 from people.people import People
 from people.worker import Worker
+from people.customer import Customer
 from map.task import Task
+from map.task import MovetoZoneTask
+from map.task import CleanObjectRecoverZone
 from map.map import Map
 from map.objs.garbage import Garbage
+from map.objects import Objects
 from display import Display
 from collections import deque
 
@@ -21,7 +25,7 @@ class Game:
         self.win = self.runDisplay.displayWindow
 
         self.map = Map(self.runDisplay.map.gameMap.tilewidth,self.runDisplay.map.gameMap.tileheight, self.runDisplay.map.walkableTiles, self.runDisplay.map.zones)
-        self.peoples = [Worker(5,2,self.map), Worker(10,4,self.map),Worker(6,4,self.map), Worker(1,4,self.map)]
+        self.peoples = [Worker(5,2,self.map), Worker(10,4,self.map),Worker(6,4,self.map), Worker(1,4,self.map),Customer(36,2,self.map), Customer(37,2,self.map),Customer(36,3,self.map)]
         #self.peoples = [Worker(5,2,self.map)]
         self.tasks = deque([])
         self.objects = deque([])
@@ -52,25 +56,36 @@ class Game:
                 tsk = self.tasks.popleft()
                 tsk.status = Task.STATUS_DOING
                 p.assignTask(tsk)
+            elif p.type_person == People.TYPE_CUSTOMER:
+                if p.gotGarbage():
+                    if self.map.isWalkable(p.x,p.y):
+                        self.addGarbage(p.x,p.y)
+                    else:
+                        print("not walkable gargabe".format(p.x,p.y))
                 #self.tasks_doing.append(tsk)
         for t in self.objects:
             if t.grabbed==False:
+                if t.status==Objects.STATUS_DIRTY:
+                    print("cleaning {} {}".format(t.x,t.y))
+                    t.status=Objects.STATUS_CLEANING
+                    self.tasks.append(CleanObjectRecoverZone(t,"garbage_zone"))
                 t.draw(self.win, self.map)
 
         if len(self.tasks_doing)>15:
             self.tasks_doing.popleft()
-
-
         self.runDisplay.displayLoop()
+
+    def addGarbage(self, x, y):
+        print("adding garbage{} {}".format(x, y))
+        obj=Garbage(x,y)
+        self.objects.append(obj)
+        self.tasks.append(MovetoZoneTask(obj,"garbage_zone"))
 
     def addObjectAt(self, pos):
         xGrid = self.map.convertPXToXGrid(pos[0])
         yGrid = self.map.convertPXToYGrid(pos[1])
         if self.map.isWalkable(xGrid,yGrid):
-            obj=getNewObject(xGrid,yGrid)
-            self.objects.append(obj)
-            self.tasks.append(obj.task)
-            print("{} {}".format(xGrid, yGrid ))
+            self.addGarbage(xGrid,yGrid)
         else:
             print("not walkable {} {}".format(xGrid,yGrid))
 

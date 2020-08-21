@@ -6,6 +6,8 @@ class Action():
     TYPE_TAKE_OBJ=3
     TYPE_RELEASE_OBJ=4
     TYPE_MAKE=5
-
+    TYPE_RESTORE=6
+    TYPE_MAKE_VISIBLE=7
+    TYPE_SET_STATUS=8
     def __init__(self,type,x,y):
         pass

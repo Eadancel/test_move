@@ -26,11 +26,11 @@ class TiledMap():
 
                         for x, y, gid in layer:
                             self.walkableTiles[y].append(gid)
-                    else:
-                        self.zones[layer.name]=deque([])
-                        for x, y, gid in layer:
-                            if gid!=0:
-                                self.zones[layer.name].append((x,y))
+
+                    self.zones[layer.name]=deque([])
+                    for x, y, gid in layer:
+                        if gid!=0:
+                            self.zones[layer.name].append((x,y))
         print("w{} h{}".format(len(self.walkableTiles), len(self.walkableTiles[0])))
         #print(self.zones)
     def make_map(self):
