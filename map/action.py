@@ -9,5 +9,8 @@ class Action():
     TYPE_RESTORE=6
     TYPE_MAKE_VISIBLE=7
     TYPE_SET_STATUS=8
+    TYPE_TASKWORK=9
+    TYPE_INCREMENT_NEED=10
+    TYPE_RELEASE_ZONE=11
     def __init__(self,type,x,y):
         pass

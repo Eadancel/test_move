@@ -47,7 +47,6 @@ class Map:
         else:
             return (0,0)
     def restoreSpotZone(self, x,y,zone):
-        print("restoring {} {}".format(x,y))
         self.zones[zone].appendleft((x,y))
     def getRandomWalkableSpot(self):
         return sample(self.walkableTiles,1)[0]

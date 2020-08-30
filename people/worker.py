@@ -17,8 +17,8 @@ pathimgs_status = (["tile_0267.png"],
                    ["tile_0269.png","tile_0296.png","tile_0323.png"])
 
 class Worker (People):
-    def __init__(self,x,y,map):
-        super().__init__(x,y,People.TYPE_WORKER,map)
+    def __init__(self,x,y,map, font):
+        super().__init__(x,y,People.TYPE_WORKER,map,font)
         self.imgs = []
         self.openForTask=True
 
@@ -36,11 +36,10 @@ class Worker (People):
             self.obj.grabbed=False
             self.obj=None
         elif self.current_action["type"]==Action.TYPE_MAKE_VISIBLE:
-            print("making invisible: {}".format(self.current_action["visible"]))
+            
             self.current_action["obj"].visible = self.current_action["visible"]
             self.obj=None
-        elif self.current_action["type"]==Action.TYPE_RESTORE:
-            self.map.restoreSpotZone(self.current_action["x"],self.current_action["y"],self.current_action["zone"])
+        
         #print(self.currentPath)
 
     def working(self):

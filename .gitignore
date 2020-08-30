@@ -3,3 +3,7 @@
 __pycache__/
 __pycache__/game.cpython-37.pyc
 .gitignore
+__pycache__/game.cpython-37.pyc
+.vscode/settings.json
+.gitignore
+.gitignore

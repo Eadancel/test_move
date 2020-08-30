@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "${workspaceFolder}/.venv/bin/python",
+    "python.pythonPath": ".venv\\Scripts\\python.exe",
     "python.linting.pylintArgs": ["----extension-pkg-whitelist=1xml"]
 }

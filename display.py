@@ -8,6 +8,7 @@ class Display():
     def __init__(self, pathMap):
 
         self.displayRunning = True
+        pygame.init()
         self.displayWindow = pygame.display.set_mode((640*2, 320*2))
         self.clock = pygame.time.Clock()
         self.pathMap = pathMap

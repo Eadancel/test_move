@@ -4,6 +4,7 @@ import math
 from map.task import Task
 from collections import deque
 from map.action import Action
+from ui.ui import Label
 class People:
     imgs = []
     TYPE_WORKER = 1
@@ -13,6 +14,7 @@ class People:
     STATUS_GOINGTO = 1
     STATUS_WORKING = 2
 
+
     DIREC_MOVING_STAY = 0
     DIREC_MOVING_UP = 1
     DIREC_MOVING_DOWN = 2
@@ -21,7 +23,7 @@ class People:
 
     FREQ_ANIMATION = 30
 
-    def __init__(self, x, y, type_person,map):
+    def __init__(self, x, y, type_person,map,font):
         self.x = x
         self.y = y
         self.map = map
@@ -41,12 +43,12 @@ class People:
         self.direcMoving = People.DIREC_MOVING_STAY
         self.obj=None
         self.default_Task = None
+        self.popup_status = Label(font, "..init..", pygame.Color("green"), (self.xGrid-8, self.xGrid-5), "midleft")
     def draw(self, win):
         """
         draw the people
         """
         idx = math.trunc( self.animation_count/(People.FREQ_ANIMATION/len(self.imgs[self.direcMoving])))
-
         self.img = self.imgs[self.direcMoving][idx]
         self.animation_count += 1
 
@@ -57,6 +59,9 @@ class People:
         win.blit(self.img, (self.xGrid, self.yGrid))
         if self.obj!=None:
             self.obj.drawOn(win,self.xGrid-5, self.yGrid)
+        if self.popup_status is not None:
+            self.popup_status.set_position((self.xGrid-8, self.yGrid-5), "midleft")
+            self.popup_status.draw(win)
 
     def do(self):
         #print ("tasks:{}".format(len(self.tasks)))
@@ -70,7 +75,8 @@ class People:
             self.working()
 
     def assignTask(self, tsk):
-        self.tasks.append(tsk)
+        if tsk is not None:
+            self.tasks.append(tsk)
 
     def move(self):
         if len(self.currentPath)>0 and self.nextPos==None:
@@ -120,6 +126,7 @@ class People:
             if len(self.tasks)>0 :
                 self.currentTask = self.tasks.popleft()
             else:
+                self.popup_status.set_text("..IDLE..")
                 self.currentTask = self.getDefaultTask()
            #     return
         self.current_action = self.currentTask.solution.popleft()
@@ -147,5 +154,11 @@ class People:
                 print("Zone FULL")
         elif self.current_action["type"]==Action.TYPE_SET_STATUS:
             self.current_action["obj"].status = self.current_action["status"]
+
+        elif self.current_action["type"]==Action.TYPE_RESTORE:
+            self.map.restoreSpotZone(self.current_action["x"],self.current_action["y"],self.current_action["zone"])
+            
+        elif self.current_action["type"]==Action.TYPE_RELEASE_ZONE:
+            self.map.restoreSpotZone(self.x,self.y,self.current_action["zone"])
 
 

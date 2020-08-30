@@ -23,9 +23,16 @@ class Game:
         self.runDisplay = Display("mapaReducido.tmx")
 
         self.win = self.runDisplay.displayWindow
-
+        label_font = pygame.font.Font(None, 10)
         self.map = Map(self.runDisplay.map.gameMap.tilewidth,self.runDisplay.map.gameMap.tileheight, self.runDisplay.map.walkableTiles, self.runDisplay.map.zones)
-        self.peoples = [Worker(5,2,self.map), Worker(10,4,self.map),Worker(6,4,self.map), Worker(1,4,self.map),Customer(36,2,self.map), Customer(37,2,self.map),Customer(36,3,self.map)]
+        self.peoples = [Worker(5,2,self.map,label_font), Worker(10,4,self.map,label_font),
+                        Worker(6,4,self.map,label_font), Worker(1,4,self.map,label_font),
+                        Customer(36,2,self.map,label_font),
+                        Customer(36,2,self.map,label_font),
+                        Customer(36,2,self.map,label_font),
+                        Customer(36,2,self.map,label_font),
+                        Customer(36,2,self.map,label_font),
+                        Customer(36,2,self.map,label_font)]
         #self.peoples = [Worker(5,2,self.map)]
         self.tasks = deque([])
         self.objects = deque([])
@@ -66,7 +73,6 @@ class Game:
         for t in self.objects:
             if t.grabbed==False:
                 if t.status==Objects.STATUS_DIRTY:
-                    print("cleaning {} {}".format(t.x,t.y))
                     t.status=Objects.STATUS_CLEANING
                     self.tasks.append(CleanObjectRecoverZone(t,"garbage_zone"))
                 t.draw(self.win, self.map)
@@ -76,7 +82,7 @@ class Game:
         self.runDisplay.displayLoop()
 
     def addGarbage(self, x, y):
-        print("adding garbage{} {}".format(x, y))
+        #print("adding garbage{} {}".format(x, y))
         obj=Garbage(x,y)
         self.objects.append(obj)
         self.tasks.append(MovetoZoneTask(obj,"garbage_zone"))
@@ -89,3 +95,13 @@ class Game:
         else:
             print("not walkable {} {}".format(xGrid,yGrid))
 
+class CustomerManager():
+    def __init__(self):
+        self.customers=[Customer(36,2,self.map,label_font),
+                        Customer(36,2,self.map,label_font),
+                        Customer(36,2,self.map,label_font),
+                        Customer(36,2,self.map,label_font),
+                        Customer(36,2,self.map,label_font),
+                        Customer(36,2,self.map,label_font)]
+    def draw(self):
+        pass
