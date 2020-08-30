@@ -38,6 +38,7 @@ class MovetoZoneTask(Task):
             { "type":Action.TYPE_GOTO_ZONE,
               "zone" :zone,
               "velocity" :1.1,
+              "mode" : "nearest",
               "drop" : True},
 
             { "type":Action.TYPE_RELEASE_OBJ},

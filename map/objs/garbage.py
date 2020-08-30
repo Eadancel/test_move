@@ -3,7 +3,7 @@ from map.action import Action
 from map.objects import Objects
 import random
 
-pathImgs = ["tile_0251.png","tile_0252.png","tile_0253.png"]
+pathImgs = ["tile_0307.png","tile_0252.png","tile_0253.png"]
 
 
 class Garbage(Objects):
@@ -19,7 +19,8 @@ class Garbage(Objects):
 
            { "type":Action.TYPE_GOTO_ZONE,
              "zone" :"garbage_zone",
-             "drop" : True
+             "drop" : True,
+             "mode" : "nearest",
              },
             {  "type":Action.TYPE_RELEASE_OBJ
             }

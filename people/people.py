@@ -37,7 +37,7 @@ class People:
         self.currentTask = None
         self.currentPath = deque([])
         self.nextPos = None
-        self.velocity = 120
+        self.velocity = 150
         self.velocity_modif = 1
         self.working_force = 100
         self.direcMoving = People.DIREC_MOVING_STAY
@@ -147,11 +147,17 @@ class People:
 
         elif self.current_action["type"]==Action.TYPE_GOTO_ZONE:
             self.status = People.STATUS_GOINGTO
-            (x_zone,y_zone)=self.map.getEmptySpotOnZone(self.current_action["zone"], self.current_action["drop"])
-            if x_zone>0 and y_zone>0:
+            if self.current_action["zone"]=="garbage_zone":
+                print("action garbage")
+            if "mode" in self.current_action and self.current_action["mode"]=="nearest":
+                (x_zone,y_zone)=self.map.getNearestSpotOnZone(self.current_action["zone"],self.x, self.y, self.current_action["drop"])
+            else:
+                (x_zone,y_zone)=self.map.getEmptySpotOnZone(self.current_action["zone"], self.current_action["drop"])
+
+            if x_zone>=0 and y_zone>=0:
                 self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, x_zone, y_zone)
             else:
-                print("Zone FULL")
+                print("Zone FULL {} {} {}".format(x_zone,y_zone,self.current_action["zone"] ))
         elif self.current_action["type"]==Action.TYPE_SET_STATUS:
             self.current_action["obj"].status = self.current_action["status"]
 

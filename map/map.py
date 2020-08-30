@@ -38,6 +38,15 @@ class Map:
         return math.trunc(px/self.xGrid)
     def convertPXToYGrid(self, px):
         return math.trunc(px/self.yGrid)
+
+    def getNearestSpotOnZone(self,zone,x,y,drop=True):
+        if len(self.zones[zone])>0:
+            nearspt=sorted(list(self.zones[zone]),key=lambda spot: self.distancePos(spot,(x,y)))[0]
+            if drop:
+                self.zones[zone].remove(nearspt)
+            return nearspt            
+        else:
+            return (-1,-1)
     def getEmptySpotOnZone(self,zone,drop=True):
         if len(self.zones[zone])>0:
             if drop:
@@ -45,7 +54,8 @@ class Map:
             else:
                 return sample(self.zones[zone],1)[0]
         else:
-            return (0,0)
+            return (-1,-1)
+            
     def restoreSpotZone(self, x,y,zone):
         self.zones[zone].appendleft((x,y))
     def getRandomWalkableSpot(self):

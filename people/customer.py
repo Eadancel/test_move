@@ -104,6 +104,7 @@ class NeedThirst(Need):
                           "zone":"bar",
                           "canInterrup":False,
                           "drop":True,
+                          "mode" : "nearest",
                           "velocity":1},
                           {"type":Action.TYPE_INCREMENT_NEED,
                            "need":"thirst",
