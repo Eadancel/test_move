@@ -17,8 +17,8 @@ pathimgs_status = (["tile_0267.png"],
                    ["tile_0269.png","tile_0296.png","tile_0323.png"])
 
 class Worker (People):
-    def __init__(self,x,y,map, font):
-        super().__init__(x,y,People.TYPE_WORKER,map,font)
+    def __init__(self,x,y,id,map, font):
+        super().__init__(x,y,id,People.TYPE_WORKER,map,font)
         self.imgs = []
         self.openForTask=True
 

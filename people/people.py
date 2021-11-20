@@ -13,7 +13,7 @@ class People:
     STATUS_IDLE = 0
     STATUS_GOINGTO = 1
     STATUS_WORKING = 2
-
+    STATUS_LEAVING = 4
 
     DIREC_MOVING_STAY = 0
     DIREC_MOVING_UP = 1
@@ -23,9 +23,10 @@ class People:
 
     FREQ_ANIMATION = 30
 
-    def __init__(self, x, y, type_person,map,font):
+    def __init__(self, x, y, id, type_person,map,font):
         self.x = x
         self.y = y
+        self.id = id
         self.map = map
         self.xGrid = self.map.convertXGridToPX(x)
         self.yGrid = self.map.convertYGridToPX(y)
@@ -64,15 +65,15 @@ class People:
             self.popup_status.draw(win)
 
     def do(self):
-        #print ("tasks:{}".format(len(self.tasks)))
+
         if self.status == People.STATUS_IDLE or (self.openForTask and len(self.tasks)>0):
             self.getNextTask()
         elif  self.status == People.STATUS_GOINGTO:
-            #print(self.openForTask)
-            #print ("tasks:{}".format(len(self.tasks)))
             self.move()
         elif  self.status == People.STATUS_WORKING:
             self.working()
+        elif  self.status == People.STATUS_LEAVING:
+            pass
 
     def assignTask(self, tsk):
         if tsk is not None:
@@ -147,8 +148,7 @@ class People:
 
         elif self.current_action["type"]==Action.TYPE_GOTO_ZONE:
             self.status = People.STATUS_GOINGTO
-            if self.current_action["zone"]=="garbage_zone":
-                print("action garbage")
+
             if "mode" in self.current_action and self.current_action["mode"]=="nearest":
                 (x_zone,y_zone)=self.map.getNearestSpotOnZone(self.current_action["zone"],self.x, self.y, self.current_action["drop"])
             else:

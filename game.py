@@ -14,11 +14,13 @@ from map.objects import Objects
 from display import Display
 from collections import deque
 from ui.ui import Label
+import random
 def getNewObject(x,y):
     return Garbage(x,y)
 
 class Game:
     teAddCustomer = pygame.USEREVENT+1
+    teCheckingGarbage = pygame.USEREVENT+2
     def __init__(self):
 
         self.runDisplay = Display("mapaReducido.tmx")
@@ -27,16 +29,17 @@ class Game:
         self.lbM = LabelManager()
         label_font = self.lbM.labelCustomer
         self.map = Map(self.runDisplay.map.gameMap.tilewidth,self.runDisplay.map.gameMap.tileheight, self.runDisplay.map.walkableTiles, self.runDisplay.map.zones)
-        self.peoples = [Worker(5,2,self.map,label_font), Worker(10,4,self.map,label_font),
-                        Worker(6,4,self.map,label_font), Worker(1,4,self.map,label_font)]
+        self.peoples = [Worker(5,2,"Worker 1",self.map,label_font), Worker(10,4,"Worker 1",self.map,label_font),
+                        Worker(6,4,"Worker 1",self.map,label_font), Worker(1,4,"Worker 1",self.map,label_font)]
         #self.peoples = [Worker(5,2,self.map)]
         self.tasks = deque([])
         self.objects = deque([])
         self.tasks_doing = deque([])
         
         pygame.time.set_timer(Game.teAddCustomer, 5000)
+        pygame.time.set_timer(Game.teCheckingGarbage, 1000)
         #self.bg = pygame.image.load(os.path.join("game_assets","bg.png"))
-
+        self.num_customer=0
     def run (self):
         run = True
         while run:
@@ -47,7 +50,20 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     self.addObjectAt(pygame.mouse.get_pos())
                 elif event.type == Game.teAddCustomer:
-                    self.peoples.append(Customer(36,2,self.map,self.lbM.labelCustomer))
+                    if random.randint(1,10)>5:
+                        self.num_customer+=1
+                        self.peoples.append(Customer(36,2,f"Customer {self.num_customer}",self.map,self.lbM.labelCustomer))
+                elif event.type == Game.teCheckingGarbage:
+                    for p in self.peoples:
+                        if p.type_person == People.TYPE_CUSTOMER:
+                            if p.gotGarbage():
+                                if self.map.isWalkable(p.x,p.y):
+                                    self.addGarbage(p.x,p.y)
+                                else:
+                                    print("not walkable gargabe".format(p.x,p.y))
+                            if p.status == People.STATUS_LEAVING:
+                                print(f"removing customer {p.id}")
+                                self.peoples.remove(p)
             self.draw()
         pygame.quit()
 
@@ -70,12 +86,7 @@ class Game:
                 tsk = self.tasks.popleft()
                 tsk.status = Task.STATUS_DOING
                 p.assignTask(tsk)
-            elif p.type_person == People.TYPE_CUSTOMER:
-                if p.gotGarbage():
-                    if self.map.isWalkable(p.x,p.y):
-                        self.addGarbage(p.x,p.y)
-                    else:
-                        print("not walkable gargabe".format(p.x,p.y))
+            
                 #self.tasks_doing.append(tsk)
 
 
@@ -99,5 +110,5 @@ class Game:
 
 class LabelManager():
     def __init__(self):
-        self.labelCustomer = pygame.font.Font(None, 10)
+        self.labelCustomer = pygame.font.Font(None, 15)
         self.labelTitle = pygame.font.Font(None, 20)

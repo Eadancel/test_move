@@ -17,16 +17,17 @@ pathimgs_status = (["tile_0186.png"],
                    ["tile_0215.png","tile_0188.png","tile_0242.png"])
 
 class Customer (People):
-    def __init__(self,x,y,map,font):
-        super().__init__(x,y,People.TYPE_CUSTOMER,map,font)
+    def __init__(self,x,y,id,map,font):
+        super().__init__(x,y,id,People.TYPE_CUSTOMER,map,font)
         self.imgs = []
         self.openForTask=True
-        
+        self.money=random.randint(1,5000)
+        print(f"Init {self.id} Money:{self.money}")
         for i in range(5):
             self.imgs.append([])
             for pi in pathimgs_status[i]:
                 self.imgs[i].append(pygame.image.load(os.path.join("game_assets/Tiles",pi)))
-        self.needs = {"thirst": NeedThirst()}
+        self.needs = {"thirst": NeedThirst(), "gambling": NeedGambling()}
     def getNextTask(self):
         super().getNextTask()
         if self.current_action["type"]==Action.TYPE_TAKE_OBJ:
@@ -37,9 +38,8 @@ class Customer (People):
             self.obj=None
         elif self.current_action["type"]==Action.TYPE_TASKWORK:
             self.status=People.STATUS_WORKING
-             
-        elif self.current_action["type"]==Action.TYPE_INCREMENT_NEED:
-            self.status=People.STATUS_WORKING
+            
+
     def draw(self,win):
         super().draw(win)
         pygame.draw.rect(win, (0,128,0), (self.xGrid, self.yGrid - 12, 25, 5))
@@ -53,22 +53,38 @@ class Customer (People):
                 self.popup_status.set_text("solving need...{}".format(k))
                 self.assignTask(task)   
 
-    def working(self):
-        value = self.current_action["value"]
-        need = self.current_action["need"]
+    def working(self):  
+        
+        if self.money>0:
+            value = self.current_action["value"]
+            need = self.current_action["need"]
+            profit = self.current_action["profit"]
+            luck = self.current_action["luck"]
+            #cost = random.randint(1,self.current_action["cost"])
+            cost = self.current_action["cost"]
 
-        self.needs[need].doDecrement(value)
-        self.popup_status.set_text("decre {} {}".format(need, value))  
-        if self.needs[need].isSolved():
-            self.status=People.STATUS_IDLE
-            self.needs[need].status=Need.STATUS_ACTIVE
+            self.money-=cost
+            ganancia = random.choices(profit,luck,k=1)[0] * cost            
+            self.money+=ganancia
+            self.needs[need].doDecrement(value)
+
+            if ganancia>0 : print(f"Customer {self.id} ganancia:{ganancia} :money {self.money}")
+            self.popup_status.set_text("decre {} {}".format(need, value))  
+
+            if self.needs[need].isSolved():
+                self.popup_status.set_text("__IDLE__")  
+                self.status=People.STATUS_IDLE
+                self.needs[need].status=Need.STATUS_ACTIVE
+            else:
+                self.status=People.STATUS_WORKING
         else:
-            self.status=People.STATUS_WORKING
+            print("money {}".format(self.money))
+            self.status=People.STATUS_LEAVING
 
     def getDefaultTask(self):
         return Task([{"type":Action.TYPE_GOTO_ZONE,"zone":"walkable","canInterrup":True,"drop":False,"velocity":0.5}],random.randint(1,20))
     def gotGarbage(self):
-        return random.randint(0,5000)<10
+        return random.randint(0,100)<10
 
 class Need():
     STATUS_INACTIVE=0
@@ -106,11 +122,37 @@ class NeedThirst(Need):
                           "drop":True,
                           "mode" : "nearest",
                           "velocity":1},
-                          {"type":Action.TYPE_INCREMENT_NEED,
+                          {"type":Action.TYPE_TASKWORK,
                            "need":"thirst",
-                           "value":10},
+                           "cost":10,
+                           "profit":[0],
+                           "luck":[100],
+                           "value":100},
                            { "type":Action.TYPE_RELEASE_ZONE,
                             "zone" :"bar"},]
+        self.threshold = 1000
+    def isSolved(self):
+        return self.value<=0
+class NeedGambling(Need):
+    def __init__(self):
+        super().__init__()
+        self.value = 0
+        self.name = "gambling"
+        self.increment = 25
+        self.solution = [{"type":Action.TYPE_GOTO_ZONE,
+                          "zone":"game",
+                          "canInterrup":False,
+                          "drop":True,
+                          "mode" : "nearest",
+                          "velocity":1},
+                          {"type":Action.TYPE_TASKWORK,
+                           "need":"gambling",
+                           "cost":100,
+                           "profit":[0,1,5,10,20,50],
+                           "luck":[90,5,2,1,0.07,0.03],
+                           "value":100},
+                           { "type":Action.TYPE_RELEASE_ZONE,
+                            "zone" :"game"},]
         self.threshold = 1000
     def isSolved(self):
         return self.value<=0
