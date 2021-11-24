@@ -14,11 +14,12 @@ class Display():
         self.pathMap = pathMap
         self.map = TiledMap(self.pathMap)
         self.map_img = self.map.make_map()
+        self.info=""
         #print(self.map.walkableTiles)
 
     def update(self):
 
-        pygame.display.set_caption("{:.2f}".format(self.clock.get_fps()))
+        pygame.display.set_caption("{:.2f}  Info {}".format(self.clock.get_fps(), self.info))
         pygame.display.update()
 
     def loadMap(self):

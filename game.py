@@ -50,7 +50,7 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     self.addObjectAt(pygame.mouse.get_pos())
                 elif event.type == Game.teAddCustomer:
-                    if random.randint(1,10)>5:
+                    if random.randint(1,10)>2 and len(self.peoples)<50:
                         self.num_customer+=1
                         self.peoples.append(Customer(36,2,f"Customer {self.num_customer}",self.map,self.lbM.labelCustomer))
                 elif event.type == Game.teCheckingGarbage:
@@ -61,9 +61,7 @@ class Game:
                                     self.addGarbage(p.x,p.y)
                                 else:
                                     print("not walkable gargabe".format(p.x,p.y))
-                            if p.status == People.STATUS_LEAVING:
-                                print(f"removing customer {p.id}")
-                                self.peoples.remove(p)
+                            
             self.draw()
         pygame.quit()
 
@@ -88,10 +86,15 @@ class Game:
                 p.assignTask(tsk)
             
                 #self.tasks_doing.append(tsk)
+            if p.status == People.STATUS_LEAVING:
+                print(f"removing customer {p.id}")
+                self.peoples.remove(p)
 
 
         if len(self.tasks_doing)>15:
             self.tasks_doing.popleft()
+        self.runDisplay.info = f"People: {len(self.peoples)} Task: {len(self.tasks_doing)} ZoneGame: {len(self.map.zones['game'])} ZoneBar: {len(self.map.zones['bar'])}" 
+        
         self.runDisplay.displayLoop()
 
     def addGarbage(self, x, y):

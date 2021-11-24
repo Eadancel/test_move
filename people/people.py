@@ -14,6 +14,7 @@ class People:
     STATUS_GOINGTO = 1
     STATUS_WORKING = 2
     STATUS_LEAVING = 4
+    STATUS_DESCRIP = ['IDLE','GOINGTO','WORKING','LEAVING']
 
     DIREC_MOVING_STAY = 0
     DIREC_MOVING_UP = 1
@@ -45,6 +46,7 @@ class People:
         self.obj=None
         self.default_Task = None
         self.popup_status = Label(font, "..init..", pygame.Color("green"), (self.xGrid-8, self.xGrid-5), "midleft")
+        self.popup_info = Label(font, "", pygame.Color("green"), (self.xGrid-8, self.xGrid-5), "midleft")
     def draw(self, win):
         """
         draw the people
@@ -63,9 +65,12 @@ class People:
         if self.popup_status is not None:
             self.popup_status.set_position((self.xGrid-8, self.yGrid-5), "midleft")
             self.popup_status.draw(win)
+        if self.popup_info is not None:
+            self.popup_info.set_position((self.xGrid-8, self.yGrid-15), "midleft")
+            self.popup_info.draw(win)
 
     def do(self):
-
+        self.popup_status.set_text(f"{self.STATUS_DESCRIP[self.status]}")
         if self.status == People.STATUS_IDLE or (self.openForTask and len(self.tasks)>0):
             self.getNextTask()
         elif  self.status == People.STATUS_GOINGTO:
@@ -125,9 +130,9 @@ class People:
     def getNextTask(self):
         if (self.currentTask==None or len(self.currentTask.solution)<=0):
             if len(self.tasks)>0 :
+
                 self.currentTask = self.tasks.popleft()
             else:
-                self.popup_status.set_text("..IDLE..")
                 self.currentTask = self.getDefaultTask()
            #     return
         self.current_action = self.currentTask.solution.popleft()
@@ -150,6 +155,8 @@ class People:
             self.status = People.STATUS_GOINGTO
 
             if "mode" in self.current_action and self.current_action["mode"]=="nearest":
+                zone = self.current_action["zone"]
+                if zone=='game' : print(f"locking zone {zone} id:{self.id}")
                 (x_zone,y_zone)=self.map.getNearestSpotOnZone(self.current_action["zone"],self.x, self.y, self.current_action["drop"])
             else:
                 (x_zone,y_zone)=self.map.getEmptySpotOnZone(self.current_action["zone"], self.current_action["drop"])
@@ -161,10 +168,15 @@ class People:
         elif self.current_action["type"]==Action.TYPE_SET_STATUS:
             self.current_action["obj"].status = self.current_action["status"]
 
+        elif self.current_action["type"]==Action.TYPE_PEOPLE_STATUS:
+            self.status = self.current_action["status"]
+
         elif self.current_action["type"]==Action.TYPE_RESTORE:
             self.map.restoreSpotZone(self.current_action["x"],self.current_action["y"],self.current_action["zone"])
             
         elif self.current_action["type"]==Action.TYPE_RELEASE_ZONE:
-            self.map.restoreSpotZone(self.x,self.y,self.current_action["zone"])
+            zone = self.current_action["zone"]
+            if zone=='game' : print(f"releasing zone {zone} id:{self.id}")
+            self.map.restoreSpotZone(self.x,self.y,zone)
 
 

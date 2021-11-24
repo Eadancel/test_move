@@ -12,5 +12,6 @@ class Action():
     TYPE_TASKWORK=9
     TYPE_INCREMENT_NEED=10
     TYPE_RELEASE_ZONE=11
+    TYPE_PEOPLE_STATUS=12
     def __init__(self,type,x,y):
         pass
