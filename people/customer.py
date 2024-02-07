@@ -99,7 +99,13 @@ class Customer (People):
 
         
     def getLeavingTask(self):
-        solution = [{"type":Action.TYPE_GOTO_ZONE,"zone":"out","canInterrup":False,"drop":False,"velocity":0.5},{"type":Action.TYPE_PEOPLE_STATUS, "status": People.STATUS_LEAVING}]
+        solution = [{"type":Action.TYPE_GOTO_ZONE,
+                     "zone":"out",
+                     "canInterrup":False,
+                     "drop":False,
+                     "velocity":0.5},
+                    {"type":Action.TYPE_PEOPLE_STATUS, 
+                     "status": People.STATUS_LEAVING}]
         return Task(solution,random.randint(1,20))
 
     def getDefaultTask(self):

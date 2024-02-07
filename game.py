@@ -28,7 +28,12 @@ class Game:
         self.win = self.runDisplay.displayWindow
         self.lbM = LabelManager()
         label_font = self.lbM.labelCustomer
-        self.map = Map(self.runDisplay.map.gameMap.tilewidth,self.runDisplay.map.gameMap.tileheight, self.runDisplay.map.walkableTiles, self.runDisplay.map.zones)
+        
+        self.map = Map(self.runDisplay.map.gameMap.tilewidth,
+                       self.runDisplay.map.gameMap.tileheight, 
+                       self.runDisplay.map.walkableTiles, 
+                       self.runDisplay.map.zones)
+        
         self.peoples = [Worker(5,2,"Worker 1",self.map,label_font), Worker(10,4,"Worker 1",self.map,label_font),
                         Worker(6,4,"Worker 1",self.map,label_font), Worker(1,4,"Worker 1",self.map,label_font)]
         #self.peoples = [Worker(5,2,self.map)]
