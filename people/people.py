@@ -14,7 +14,7 @@ class People:
     STATUS_GOINGTO = 1
     STATUS_WORKING = 2
     STATUS_LEAVING = 4
-    STATUS_DESCRIP = ['IDLE','GOINGTO','WORKING','LEAVING']
+    STATUS_DESCRIP = ['IDLE','','WORKING','LEAVING']  ## GOING TO hidden
 
     DIREC_MOVING_STAY = 0
     DIREC_MOVING_UP = 1
@@ -45,7 +45,7 @@ class People:
         self.direcMoving = People.DIREC_MOVING_STAY
         self.obj=None
         self.default_Task = None
-        self.popup_status = Label(font, "..init..", pygame.Color("green"), (self.xGrid-8, self.xGrid-5), "midleft")
+        self.popup_status = Label(font, "", pygame.Color("green"), (self.xGrid-8, self.xGrid-5), "midleft")
         self.popup_info = Label(font, "", pygame.Color("green"), (self.xGrid-8, self.xGrid-5), "midleft")
     def draw(self, win):
         """
@@ -85,8 +85,9 @@ class People:
             self.tasks.append(tsk)
 
     def move(self):
+        #print(self.currentPath)
         if len(self.currentPath)>0 and self.nextPos==None:
-            self.nextPos=self.currentPath.pop(0)
+            self.nextPos=tuple(self.currentPath.pop(0))
         if self.nextPos!=None :
             self.moveTo()
         else:
@@ -94,6 +95,7 @@ class People:
 
     def moveTo(self):
         veloc = self.velocity * self.velocity_modif
+        #print(self.nextPos)
         nextXGrid = self.map.convertXGridToPX(self.nextPos[0])
         nextYGrid = self.map.convertYGridToPX(self.nextPos[1])
         # print("moving to {} {} - {} {}".format(nextXGrid,nextYGrid,self.nextPos[0],self.nextPos[1]))
@@ -153,13 +155,12 @@ class People:
 
         elif self.current_action["type"]==Action.TYPE_GOTO_ZONE:
             self.status = People.STATUS_GOINGTO
-
+            zone = self.current_action["zone"]
             if "mode" in self.current_action and self.current_action["mode"]=="nearest":
-                zone = self.current_action["zone"]
                 if zone=='game' : print(f"locking zone {zone} id:{self.id}")
-                (x_zone,y_zone)=self.map.getNearestSpotOnZone(self.current_action["zone"],self.x, self.y, self.current_action["drop"])
+                (x_zone,y_zone)=self.map.getNearestSpotOnZone(zone,self.x, self.y, self.current_action["drop"])
             else:
-                (x_zone,y_zone)=self.map.getEmptySpotOnZone(self.current_action["zone"], self.current_action["drop"])
+                (x_zone,y_zone)=self.map.getEmptySpotOnZone(zone, self.current_action["drop"])
 
             if x_zone>=0 and y_zone>=0:
                 self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, x_zone, y_zone)
