@@ -45,8 +45,9 @@ class People:
         self.direcMoving = People.DIREC_MOVING_STAY
         self.obj=None
         self.default_Task = None
-        self.popup_status = Label(font, "", pygame.Color("green"), (self.xGrid-8, self.xGrid-5), "midleft")
-        self.popup_info = Label(font, "", pygame.Color("green"), (self.xGrid-8, self.xGrid-5), "midleft")
+        self.popup_status = Label(font, "", pygame.Color("black"), (self.xGrid-8, self.xGrid-5), "midleft")
+        self.popup_info = Label(font, "", pygame.Color("black"), (self.xGrid-8, self.xGrid-5), "midleft")
+        self.start_working_at=0
     def draw(self, win):
         """
         draw the people
@@ -64,9 +65,9 @@ class People:
             self.obj.drawOn(win,self.xGrid-5, self.yGrid)
         if self.popup_status is not None:
             self.popup_status.set_position((self.xGrid-8, self.yGrid-5), "midleft")
-            self.popup_status.draw(win)
+            #self.popup_status.draw(win)
         if self.popup_info is not None:
-            self.popup_info.set_position((self.xGrid-8, self.yGrid-15), "midleft")
+            self.popup_info.set_position((self.xGrid-8, self.yGrid-5), "midleft")
             self.popup_info.draw(win)
 
     def do(self):
@@ -76,7 +77,11 @@ class People:
         elif  self.status == People.STATUS_GOINGTO:
             self.move()
         elif  self.status == People.STATUS_WORKING:
-            self.working()
+
+            lapsed_secs = (pygame.time.get_ticks()-self.start_working_at)/1000
+            if lapsed_secs > 1 :
+                self.start_working_at = pygame.time.get_ticks() 
+                self.working()
         elif  self.status == People.STATUS_LEAVING:
             pass
 
@@ -149,46 +154,55 @@ class People:
         else:
             self.velocity_modif=1
 
-        token_do = {
-            Action.TYPE_GOTO_X_Y: do_GOTO_X_Y,
-            Action.TYPE_GOTO_ZONE: do_GOTO_ZONE,
-            Action.TYPE_GOTO_ZONE: do_SET_STATUS,
-            Action.TYPE_PEOPLE_STATUS: do_PEOPLE_STATUS,
-            Action.TYPE_RESTORE: do_RESTORE,
-            Action.TYPE_RELEASE_ZONE: do_RELEASE_ZONE
-        }
+        {
+            Action.TYPE_GOTO_X_Y: self.do_GOTO_X_Y,
+            Action.TYPE_GOTO_ZONE: self.do_GOTO_ZONE,
+            Action.TYPE_SET_STATUS: self.do_SET_STATUS,
+            Action.TYPE_PEOPLE_STATUS: self.do_PEOPLE_STATUS,
+            Action.TYPE_RESTORE: self.do_RESTORE,
+            Action.TYPE_RELEASE_ZONE: self.do_RELEASE_ZONE
 
-        def do_GOTO_X_Y(self):
-            self.status = People.STATUS_GOINGTO
-            self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, self.current_action["x"], self.current_action["y"])     
-        
-        def do_GOTO_ZONE(self):
-            self.status = People.STATUS_GOINGTO
-            zone = self.current_action["zone"]
-            if "mode" in self.current_action and self.current_action["mode"]=="nearest":
-                if zone=='game' : print(f"locking zone {zone} id:{self.id}")
-                (x_zone,y_zone)=self.map.getNearestSpotOnZone(zone,self.x, self.y, self.current_action["drop"])
-            else:
-                (x_zone,y_zone)=self.map.getEmptySpotOnZone(zone, self.current_action["drop"])
+        }.get(self.current_action["type"],self.do_INTERNAL)()
 
-            if x_zone>=0 and y_zone>=0:
-                self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, x_zone, y_zone)
-            else:
-                print("Zone FULL {} {} {}".format(x_zone,y_zone,self.current_action["zone"] ))
+    def do_INTERNAL(self):
+        pass
+    def do_GOTO_X_Y(self):
+        self.status = People.STATUS_GOINGTO
+        self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, self.current_action["x"], self.current_action["y"])     
+    
+    def do_GOTO_ZONE(self):
+        self.status = People.STATUS_GOINGTO
+        zone = self.current_action["zone"]
+        if "mode" in self.current_action and self.current_action["mode"]=="nearest":
+            #if zone=='game' : print(f"locking zone {zone} id:{self.id}")
+            (x_zone,y_zone)=self.map.getNearestSpotOnZone(zone,self.x, self.y, self.current_action["drop"])
+        else:
+            (x_zone,y_zone)=self.map.getEmptySpotOnZone(zone, self.current_action["drop"])
 
-        def do_SET_STATUS(self):
-            self.current_action["obj"].status = self.current_action["status"]
-        
-        def do_PEOPLE_STATUS(self):
-            self.status = self.current_action["status"]     
-        
-        def do_RESTORE(self):
-            self.map.restoreSpotZone(self.current_action["x"],self.current_action["y"],self.current_action["zone"])
-        
-        def do_RELEASE_ZONE(self):
-            zone = self.current_action["zone"]
-            if zone=='game' : print(f"releasing zone {zone} id:{self.id}")
-            self.map.restoreSpotZone(self.x,self.y,zone)
+        if x_zone>=0 and y_zone>=0:
+            self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, x_zone, y_zone)
+        else:
+            print("Zone FULL {} {} {}".format(x_zone,y_zone,self.current_action["zone"] ))
+
+    def do_SET_STATUS(self):
+        self.current_action["obj"].status = self.current_action["status"]
+    
+    def do_PEOPLE_STATUS(self):
+        self.status = self.current_action["status"]     
+    
+    def do_RESTORE(self):
+        self.map.restoreSpotZone(self.current_action["x"],self.current_action["y"],self.current_action["zone"])
+    
+    def do_RELEASE_ZONE(self):
+        zone = self.current_action["zone"]
+        if zone=='game' : print(f"releasing zone {zone} id:{self.id}")
+        self.map.restoreSpotZone(self.x,self.y,zone)
+
+
+
+
+
+
 
         # if self.current_action["type"]==Action.TYPE_GOTO_X_Y:
         #     self.status = People.STATUS_GOINGTO

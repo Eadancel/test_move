@@ -22,12 +22,14 @@ class Node():
         return self.position == other.position
 
 class Map:
-    def __init__(self, xGrid, yGrid, walkableTiles, zones):
-        self.xGrid = xGrid
-        self.yGrid = yGrid
+    def __init__(self,display):
+
+        self.runDisplay = display
+        self.xGrid = self.runDisplay.map.gameMap.tilewidth
+        self.yGrid = self.runDisplay.map.gameMap.tileheight
         self.tasks = []
-        self.walkableTiles = walkableTiles
-        self.zones = zones
+        self.walkableTiles = self.runDisplay.map.walkableTiles
+        self.zones = self.runDisplay.map.zones
 
     def convertXGridToPX(self, pos):
         return pos*self.xGrid
