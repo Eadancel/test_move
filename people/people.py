@@ -140,20 +140,28 @@ class People:
         if "canInterrup" in self.current_action:
             self.openForTask=self.current_action["canInterrup"]
         else:
-            self.openForTask=False
+            self.openForTask=False  
 
         if "velocity" in self.current_action:
             self.velocity_modif=self.current_action["velocity"]
         else:
             self.velocity_modif=1
 
-        if self.current_action["type"]==Action.TYPE_GOTO_X_Y:
-            self.status = People.STATUS_GOINGTO
-            self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, self.current_action["x"], self.current_action["y"])
+        token_do = {
+            Action.TYPE_GOTO_X_Y: do_GOTO_X_Y,
+            Action.TYPE_GOTO_ZONE: do_GOTO_ZONE,
+            Action.TYPE_GOTO_ZONE: do_SET_STATUS,
+            Action.TYPE_PEOPLE_STATUS: do_PEOPLE_STATUS,
+            Action.TYPE_RESTORE: do_RESTORE,
+            Action.TYPE_RELEASE_ZONE: do_RELEASE_ZONE
+        }
 
-        elif self.current_action["type"]==Action.TYPE_GOTO_ZONE:
+        def do_GOTO_X_Y(self):
             self.status = People.STATUS_GOINGTO
-
+            self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, self.current_action["x"], self.current_action["y"])     
+        
+        def do_GOTO_ZONE(self):
+            self.status = People.STATUS_GOINGTO
             if "mode" in self.current_action and self.current_action["mode"]=="nearest":
                 zone = self.current_action["zone"]
                 if zone=='game' : print(f"locking zone {zone} id:{self.id}")
@@ -165,18 +173,49 @@ class People:
                 self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, x_zone, y_zone)
             else:
                 print("Zone FULL {} {} {}".format(x_zone,y_zone,self.current_action["zone"] ))
-        elif self.current_action["type"]==Action.TYPE_SET_STATUS:
+
+        def do_SET_STATUS(self):
             self.current_action["obj"].status = self.current_action["status"]
-
-        elif self.current_action["type"]==Action.TYPE_PEOPLE_STATUS:
-            self.status = self.current_action["status"]
-
-        elif self.current_action["type"]==Action.TYPE_RESTORE:
+        
+        def do_PEOPLE_STATUS(self):
+            self.status = self.current_action["status"]     
+        
+        def do_RESTORE(self):
             self.map.restoreSpotZone(self.current_action["x"],self.current_action["y"],self.current_action["zone"])
-            
-        elif self.current_action["type"]==Action.TYPE_RELEASE_ZONE:
+        
+        def do_RELEASE_ZONE(self):
             zone = self.current_action["zone"]
             if zone=='game' : print(f"releasing zone {zone} id:{self.id}")
             self.map.restoreSpotZone(self.x,self.y,zone)
 
+        # if self.current_action["type"]==Action.TYPE_GOTO_X_Y:
+        #     self.status = People.STATUS_GOINGTO
+        #     self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, self.current_action["x"], self.current_action["y"])
 
+        # elif self.current_action["type"]==Action.TYPE_GOTO_ZONE:
+        #     self.status = People.STATUS_GOINGTO
+
+        #     if "mode" in self.current_action and self.current_action["mode"]=="nearest":
+        #         zone = self.current_action["zone"]
+        #         if zone=='game' : print(f"locking zone {zone} id:{self.id}")
+        #         (x_zone,y_zone)=self.map.getNearestSpotOnZone(self.current_action["zone"],self.x, self.y, self.current_action["drop"])
+        #     else:
+        #         (x_zone,y_zone)=self.map.getEmptySpotOnZone(self.current_action["zone"], self.current_action["drop"])
+
+        #     if x_zone>=0 and y_zone>=0:
+        #         self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, x_zone, y_zone)
+        #     else:
+        #         print("Zone FULL {} {} {}".format(x_zone,y_zone,self.current_action["zone"] ))
+        # elif self.current_action["type"]==Action.TYPE_SET_STATUS:
+        #     self.current_action["obj"].status = self.current_action["status"]
+
+        # elif self.current_action["type"]==Action.TYPE_PEOPLE_STATUS:
+        #     self.status = self.current_action["status"]
+
+        # elif self.current_action["type"]==Action.TYPE_RESTORE:
+        #     self.map.restoreSpotZone(self.current_action["x"],self.current_action["y"],self.current_action["zone"])
+            
+        # elif self.current_action["type"]==Action.TYPE_RELEASE_ZONE:
+        #     zone = self.current_action["zone"]
+        #     if zone=='game' : print(f"releasing zone {zone} id:{self.id}")
+        #     self.map.restoreSpotZone(self.x,self.y,zone)
