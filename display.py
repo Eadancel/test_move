@@ -27,7 +27,6 @@ class Display():
         self.displayWindow.blit(self.map_img,(0,0))
 
     def displayLoop(self):
-
-        self.clock.tick(60)
         self.update()
         self.loadMap()
+        self.clock.tick(60)

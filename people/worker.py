@@ -1,9 +1,10 @@
 import pygame
 import os
 import people
-from map.task import Task
+from map.task import Task, WanderTask
 from map.action import Action
 from .people import People
+from people.need import Need, NeedCleaning, NeedResting
 import random
     # DIREC_MOVING_STAY = 0
     # DIREC_MOVING_UP = 1
@@ -26,6 +27,8 @@ class Worker (People):
             self.imgs.append([])
             for pi in pathimgs_status[i]:
                 self.imgs[i].append(pygame.image.load(os.path.join("game_assets/Tiles",pi)))
+        self.intensity = random.randint(1,5)
+        self.needs = {"cleaning": NeedCleaning(), "resting": NeedResting(random.randint(1,10))}
 
     def getNextTask(self):
         super().getNextTask()
@@ -35,18 +38,26 @@ class Worker (People):
         elif self.current_action["type"]==Action.TYPE_RELEASE_OBJ:
             self.obj.grabbed=False
             self.obj=None
-        elif self.current_action["type"]==Action.TYPE_MAKE_VISIBLE:
-            
-            self.current_action["obj"].visible = self.current_action["visible"]
+        elif self.current_action["type"]==Action.TYPE_MAKE_VISIBLE:           
+            self.game.removeObj(self.current_action["obj"])
+            #self.current_action["obj"].visible = self.current_action["visible"]
             self.obj=None
+
+        elif self.current_action["type"] in (Action.TYPE_TASKWORK, Action.TYPE_TASKWORK_OBJ):
+            self.status=People.STATUS_WORKING
         
         #print(self.currentPath)
 
     def working(self):
-        self.currentTask.workingOn(self.working_force)
-        if self.currentTask.status == Task.STATUS_DONE:
-            self.status=People.STATUS_IDLE
+        value = self.current_action['value']
+        need = self.currentTask.need
+        self.needs[need].doDecrement(value)
+        
+        if self.needs[need].isSolved():
+                self.status=People.STATUS_IDLE
+                self.needs[need].status=Need.STATUS_ACTIVE
         else:
-            self.status=People.STATUS_WORKING
+                self.status=People.STATUS_WORKING
+
     def getDefaultTask(self):
-        return Task([{"type":Action.TYPE_GOTO_ZONE,"zone":"rest_zone","canInterrup":True,"drop":False,"velocity":0.5}],random.randint(1,20))
+        return WanderTask("rest_zone")

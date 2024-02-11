@@ -31,8 +31,8 @@ class TiledMap():
                     for x, y, gid in layer:
                         if gid!=0:
                             self.zones[layer.name].append((x,y))
-        print("w{} h{}".format(len(self.walkableTiles), len(self.walkableTiles[0])))
-        #print(self.zones)
+        print("h{} w{}".format(len(self.walkableTiles), len(self.walkableTiles[0])))
+        #print(self.walkableTiles)
     def make_map(self):
         mapSurface = pygame.Surface((self.mapwidth, self.mapheight))
         self.render(mapSurface)

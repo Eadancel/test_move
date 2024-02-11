@@ -13,5 +13,8 @@ class Action():
     TYPE_INCREMENT_NEED=10
     TYPE_RELEASE_ZONE=11
     TYPE_PEOPLE_STATUS=12
+    TYPE_RESTORE_TASK = 13
+    TYPE_TASKWORK_OBJ =14
+    TYPE_TURN_INTO_GARBAGE = 15
     def __init__(self,type,x,y):
         pass

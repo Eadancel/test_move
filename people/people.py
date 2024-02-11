@@ -1,7 +1,6 @@
 
 import pygame
 import math
-from map.task import Task
 from collections import deque
 from map.action import Action
 from ui.ui import Label
@@ -24,11 +23,12 @@ class People:
 
     FREQ_ANIMATION = 30
 
-    def __init__(self, x, y, id, type_person,map,font):
+    def __init__(self, x, y, id, type_person,game,font):
         self.x = x
         self.y = y
         self.id = id
-        self.map = map
+        self.game = game
+        self.map = self.game.map
         self.xGrid = self.map.convertXGridToPX(x)
         self.yGrid = self.map.convertYGridToPX(y)
         self.animation_count = 0
@@ -45,9 +45,11 @@ class People:
         self.direcMoving = People.DIREC_MOVING_STAY
         self.obj=None
         self.default_Task = None
-        self.popup_status = Label(font, "", pygame.Color("black"), (self.xGrid-8, self.xGrid-5), "midleft")
-        self.popup_info = Label(font, "", pygame.Color("black"), (self.xGrid-8, self.xGrid-5), "midleft")
+        self.popup_status = Label(font, "", pygame.Color("black"), (self.xGrid-8, self.yGrid-10), "midleft")
+        self.popup_info = Label(font, "", pygame.Color("black"), (self.xGrid-8, self.yGrid-10), "midleft")
         self.start_working_at=0
+        self.intensity = 0
+        self.needs = {}
     def draw(self, win):
         """
         draw the people
@@ -64,11 +66,24 @@ class People:
         if self.obj!=None:
             self.obj.drawOn(win,self.xGrid-5, self.yGrid)
         if self.popup_status is not None:
-            self.popup_status.set_position((self.xGrid-8, self.yGrid-5), "midleft")
+            self.popup_status.set_position((self.xGrid-8, self.yGrid), "midleft")
             #self.popup_status.draw(win)
         if self.popup_info is not None:
-            self.popup_info.set_position((self.xGrid-8, self.yGrid-5), "midleft")
+            self.popup_info.set_position((self.xGrid-8, self.yGrid), "midleft")
             self.popup_info.draw(win)
+        offset = 10
+
+        for (k,n) in self.needs.items():
+            n.draw(win, self.xGrid, self.yGrid - offset)
+            offset+=5
+            n.doIncrement(self.intensity)             
+            if n.check():
+                
+                task = n.solve(self.game)
+                if task!=None : 
+                    
+                    self.popup_status.set_text("solving need...{}".format(k))
+                    self.assignTask(task)
 
     def do(self):
         self.popup_status.set_text(f"{self.STATUS_DESCRIP[self.status]}")
@@ -79,7 +94,9 @@ class People:
         elif  self.status == People.STATUS_WORKING:
 
             lapsed_secs = (pygame.time.get_ticks()-self.start_working_at)/1000
-            if lapsed_secs > 1 :
+            need = self.currentTask.need
+
+            if lapsed_secs > 1 :      ## keep as 1 sec instead self.needs[need].adding_sec
                 self.start_working_at = pygame.time.get_ticks() 
                 self.working()
         elif  self.status == People.STATUS_LEAVING:
@@ -160,8 +177,9 @@ class People:
             Action.TYPE_SET_STATUS: self.do_SET_STATUS,
             Action.TYPE_PEOPLE_STATUS: self.do_PEOPLE_STATUS,
             Action.TYPE_RESTORE: self.do_RESTORE,
-            Action.TYPE_RELEASE_ZONE: self.do_RELEASE_ZONE
-
+            Action.TYPE_RELEASE_ZONE: self.do_RELEASE_ZONE,
+            Action.TYPE_RESTORE_TASK: self.do_RESTORE_TASK,
+            Action.TYPE_TURN_INTO_GARBAGE : self.do_TURN_INTO_GARBAGE,
         }.get(self.current_action["type"],self.do_INTERNAL)()
 
     def do_INTERNAL(self):
@@ -195,9 +213,14 @@ class People:
     
     def do_RELEASE_ZONE(self):
         zone = self.current_action["zone"]
-        if zone=='game' : print(f"releasing zone {zone} id:{self.id}")
+        #if zone=='game' : print(f"releasing zone {zone} id:{self.id}")
         self.map.restoreSpotZone(self.x,self.y,zone)
 
+    def do_RESTORE_TASK(self):
+        self.game.addTask(self.current_action["obj"].getTask())
+    
+    def do_TURN_INTO_GARBAGE(self):
+        self.game.turnIntoGarbage(self.current_action["obj"])
 
 
 
