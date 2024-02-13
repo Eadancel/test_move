@@ -15,14 +15,14 @@ from ui.ui import Label
 import random
 
 CREATE_NEW_CUSTOMER = True
-
-
+PATH_maps = 'game_assets'
+## "mapaCity.tmx"
 class Game:
     teAddCustomer = pygame.USEREVENT+1
     teCheckingGarbage = pygame.USEREVENT+2
     def __init__(self):
 
-        self.runDisplay = Display("mapaCity.tmx")
+        self.runDisplay = Display(os.path.join(PATH_maps,"hotel/SimulatorCity.tmx"))
 
         self.win = self.runDisplay.displayWindow
         self.lbM = LabelManager()
@@ -30,10 +30,12 @@ class Game:
         
         self.map = Map(self.runDisplay)
         
-        self.peoples = [Worker(5,2,"Worker 1",self,label_font), 
-                        Worker(10,4,"Worker 2",self,label_font),
-                        Worker(6,4,"Worker 3",self,label_font), 
-                        Worker(1,4,"Worker 4",self,label_font),
+        self.peoples = [Worker(18,16,"Worker 1",self,label_font), 
+                        Worker(18,19,"Worker 2",self,label_font),
+                        # Worker(6,4,"Worker 3",self,label_font), 
+                        # Worker(1,4,"Worker 4",self,label_font),
+                        # Worker(1,4,"Worker 5",self,label_font),
+                        # Worker(1,4,"Worker 6",self,label_font),
                        # Customer(36,2,f"Customer Test",self,label_font),
                        # Customer(36,4,f"Customer Test",self,label_font),
                         ]
@@ -48,6 +50,11 @@ class Game:
         self.addObject(Sofa(42, 2))
         self.addObject(Garbage(45, 3))
         self.addObject(SlotMachine(41,13))
+        self.addObject(SlotMachine(43,13))
+        self.addObject(SlotMachine(45,13))
+        self.addObject(SlotMachine(41,18))
+        self.addObject(SlotMachine(43,18))
+        self.addObject(SlotMachine(45,18))
         self.addObject(Drink(52,19))
         self.num_customer=0
     def run (self):
@@ -61,7 +68,7 @@ class Game:
                     pos = pygame.mouse.get_pos()
                     xGrid = self.map.convertPXToXGrid(pos[0])
                     yGrid = self.map.convertPXToYGrid(pos[1])
-
+                    print(f"adding at {xGrid},{yGrid}")
                     self.addObject(Drink(xGrid, yGrid))
                 elif event.type == Game.teAddCustomer:
                     if random.randint(1,10)>2 and len(self.peoples)<50 and CREATE_NEW_CUSTOMER:

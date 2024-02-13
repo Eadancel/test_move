@@ -60,4 +60,4 @@ class Worker (People):
                 self.status=People.STATUS_WORKING
 
     def getDefaultTask(self):
-        return WanderTask("rest_zone")
+        return WanderTask("walkable")

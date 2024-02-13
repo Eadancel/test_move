@@ -23,7 +23,7 @@ class Customer (People):
         super().__init__(x,y,id,People.TYPE_CUSTOMER,game,font)
         self.imgs = []
         self.openForTask=True
-        self.money=random.randint(1,5000)+3000
+        self.money=random.randint(1,5000)#+3000
         self.garbage = random.randint(1,5)
         self.intensity = random.randint(1,5)
         print(f"Init {self.id} Money:{self.money} Intensity:{self.intensity}" )
@@ -70,6 +70,7 @@ class Customer (People):
                 self.status=People.STATUS_IDLE
                 self.popup_status.set_text("Leaving...")
                 self.assignTask(self.getLeavingTask())
+                return
 
         self.garbage+=random.randint(1,addGarba)
 

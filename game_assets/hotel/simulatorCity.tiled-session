@@ -1,0 +1,65 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "SimulatorCity.tmx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "Generic.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "InterHospital.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 1
+        },
+        "Kitchen.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 1
+        },
+        "SimulatorCity.tmx": {
+            "scale": 1,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 262,
+                "y": 566
+            }
+        },
+        "condo.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 1
+        },
+        "walls.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 2
+        }
+    },
+    "last.imagePath": "C:/dev/res/moderninteriors-win/1_Interiors/16x16/Theme_Sorter_Black_Shadow",
+    "map.height": 40,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 80,
+    "openFiles": [
+        "SimulatorCity.tmx",
+        "condo.tsx",
+        "Generic.tsx",
+        "Kitchen.tsx"
+    ],
+    "project": "simulatorCity.tiled-project",
+    "recentFiles": [
+        "Kitchen.tsx",
+        "Generic.tsx",
+        "condo.tsx",
+        "SimulatorCity.tmx",
+        "walls.tsx",
+        "InterHospital.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}
