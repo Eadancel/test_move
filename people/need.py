@@ -72,7 +72,7 @@ class NeedCleaning(Need):
         super().__init__()
         self.value = 0
         self.name = "cleaning"
-        self.increment = 20
+        self.increment = 50
         self.adding_sec = 1
         self.threshold = 100
     

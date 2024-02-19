@@ -12,11 +12,13 @@ from people.need import Need, NeedGambling, NeedThirst
     # DIREC_MOVING_DOWN = 2
     # DIREC_MOVING_LEFT = 3
     # DIREC_MOVING_RIGHT = 4
-pathimgs_status = (["tile_0186.png"],
-                   ["tile_0214.png","tile_0187.png","tile_0241.png"],
-                   ["tile_0213.png","tile_0186.png","tile_0240.png"],
-                   ["tile_0212.png","tile_0185.png","tile_0239.png"],
-                   ["tile_0215.png","tile_0188.png","tile_0242.png"])
+img_matrix = {  People.ANIMA_MOVING_STAY:    [(288+i*16,32,16,32) for i in range(6)],
+                People.ANIMA_MOVING_UP:      [(96+i*16,64,16,32) for i in range(6)],
+                People.ANIMA_MOVING_DOWN:    [(288+i*16,64,16,32) for i in range(6)],
+                People.ANIMA_MOVING_LEFT:    [(192+i*16,64,16,32) for i in range(6)],
+                People.ANIMA_MOVING_RIGHT:   [(0+i*16,64,16,32) for i in range(6)],
+                People.ANIMA_WORKING:        [(0+i*16,224,16,32) for i in range(12)]}
+
 
 class Customer (People):
     def __init__(self,x,y,id,game,font):
@@ -27,10 +29,8 @@ class Customer (People):
         self.garbage = random.randint(1,5)
         self.intensity = random.randint(1,5)
         print(f"Init {self.id} Money:{self.money} Intensity:{self.intensity}" )
-        for i in range(5):
-            self.imgs.append([])
-            for pi in pathimgs_status[i]:
-                self.imgs[i].append(pygame.image.load(os.path.join("game_assets/Tiles",pi)))
+        img_tileset = os.path.join("game_assets",f"hotel/characters/customer_{random.randint(1,3)}.png")
+        self.load_img_ani(img_matrix,img_tileset)
         
         self.needs = {"thirst": NeedThirst(), 
                       "gambling": NeedGambling()}
@@ -84,7 +84,7 @@ class Customer (People):
         return LeavingGameTask("out")
 
     def getDefaultTask(self):
-        return WanderTask("walkable")
+        return WanderTask("walkable_path")
     def gotGarbage(self):
         if self.garbage>100 :
             self.garbage=0

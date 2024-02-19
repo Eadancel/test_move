@@ -22,7 +22,7 @@ class Game:
     teCheckingGarbage = pygame.USEREVENT+2
     def __init__(self):
 
-        self.runDisplay = Display(os.path.join(PATH_maps,"hotel/SimulatorCity.tmx"))
+        self.runDisplay = Display(os.path.join(PATH_maps,"hotel/Restaurante.tmx"))
 
         self.win = self.runDisplay.displayWindow
         self.lbM = LabelManager()
@@ -30,14 +30,14 @@ class Game:
         
         self.map = Map(self.runDisplay)
         
-        self.peoples = [Worker(18,16,"Worker 1",self,label_font), 
-                        Worker(18,19,"Worker 2",self,label_font),
+        self.peoples = [Worker(30,9,"Worker 1",self,label_font), 
+                        Worker(37,15,"Worker 2",self,label_font),
                         # Worker(6,4,"Worker 3",self,label_font), 
                         # Worker(1,4,"Worker 4",self,label_font),
                         # Worker(1,4,"Worker 5",self,label_font),
                         # Worker(1,4,"Worker 6",self,label_font),
-                       # Customer(36,2,f"Customer Test",self,label_font),
-                       # Customer(36,4,f"Customer Test",self,label_font),
+                        # Customer(36,10,f"Customer Test",self,label_font),
+                        # Customer(36,12,f"Customer Test",self,label_font),
                         ]
         #self.peoples = [Worker(5,2,self.map)]
         self.tasks = {}
@@ -46,9 +46,9 @@ class Game:
         
         pygame.time.set_timer(Game.teAddCustomer, 5000)
         pygame.time.set_timer(Game.teCheckingGarbage, 1000)
-        self.addObject(Sofa(38, 2))
-        self.addObject(Sofa(42, 2))
-        self.addObject(Garbage(45, 3))
+        self.addObject(Sofa(38, 10))
+        self.addObject(Sofa(42, 15))
+        self.addObject(Garbage(45, 15))
         self.addObject(SlotMachine(41,13))
         self.addObject(SlotMachine(43,13))
         self.addObject(SlotMachine(45,13))
@@ -73,7 +73,7 @@ class Game:
                 elif event.type == Game.teAddCustomer:
                     if random.randint(1,10)>2 and len(self.peoples)<50 and CREATE_NEW_CUSTOMER:
                         self.num_customer+=1
-                        self.peoples.append(Customer(36,2,f"Customer {self.num_customer}",self,self.lbM.labelCustomer))
+                        self.peoples.append(Customer(32,10,f"Customer {self.num_customer}",self,self.lbM.labelCustomer))
                 elif event.type == Game.teCheckingGarbage:
                     for p in self.peoples:
                         if p.type_person == People.TYPE_CUSTOMER:
@@ -96,7 +96,7 @@ class Game:
             if t.grabbed==False:
                 if t.status==Objects.STATUS_DIRTY:
                     t.status=Objects.STATUS_CLEANING
-                    self.addTask(CleanObjectRecoverZone(t,"garbage_zone"))
+                    self.addTask(CleanObjectRecoverZone(t,"garbage"))
                 t.draw(self.win, self.map)
 
         for p in self.peoples:

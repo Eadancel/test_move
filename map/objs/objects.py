@@ -36,7 +36,7 @@ class Garbage(Objects):
     
     def __init__(self,x,y):
         super().__init__(x,y,"garbage",["tile_0307.png","tile_0307.png","tile_0307.png"])
-        self.task = MovetoZoneTaskTakeRelease(self,"garbage_zone","cleaning",Objects.STATUS_DIRTY)
+        self.task = MovetoZoneTaskTakeRelease(self,"garbage","cleaning",Objects.STATUS_DIRTY)
 
 
 class SlotMachine(Objects):

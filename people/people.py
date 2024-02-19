@@ -4,6 +4,7 @@ import math
 from collections import deque
 from map.action import Action
 from ui.ui import Label
+from utils.utils import Animation, extractTilesfromImage
 class People:
     imgs = []
     TYPE_WORKER = 1
@@ -15,13 +16,14 @@ class People:
     STATUS_LEAVING = 4
     STATUS_DESCRIP = ['IDLE','','WORKING','LEAVING']  ## GOING TO hidden
 
-    DIREC_MOVING_STAY = 0
-    DIREC_MOVING_UP = 1
-    DIREC_MOVING_DOWN = 2
-    DIREC_MOVING_LEFT = 3
-    DIREC_MOVING_RIGHT = 4
+    ANIMA_MOVING_STAY = 0
+    ANIMA_MOVING_UP = 1
+    ANIMA_MOVING_DOWN = 2
+    ANIMA_MOVING_LEFT = 3
+    ANIMA_MOVING_RIGHT = 4
+    ANIMA_WORKING = 5
 
-    FREQ_ANIMATION = 30
+    FRAME_DURATION = 5
 
     def __init__(self, x, y, id, type_person,game,font):
         self.x = x
@@ -33,7 +35,7 @@ class People:
         self.yGrid = self.map.convertYGridToPX(y)
         self.animation_count = 0
         self.tasks = deque([])
-        self.img = None
+        self.animations = {}
         self.type_person = type_person
         self.status = People.STATUS_IDLE
         self.currentTask = None
@@ -42,7 +44,7 @@ class People:
         self.velocity = 150
         self.velocity_modif = 1
         self.working_force = 100
-        self.direcMoving = People.DIREC_MOVING_STAY
+        self.direcMoving = People.ANIMA_MOVING_STAY
         self.obj=None
         self.default_Task = None
         self.popup_status = Label(font, "", pygame.Color("black"), (self.xGrid-8, self.yGrid-10), "midleft")
@@ -50,28 +52,32 @@ class People:
         self.start_working_at=0
         self.intensity = 0
         self.needs = {}
+            
+
+    def load_img_ani(self,img_matrix, tileset_fn):
+        self.tileset = pygame.image.load(tileset_fn)
+        self.animations = {k: Animation(extractTilesfromImage(self.tileset,v),self.FRAME_DURATION,True) for k, v in img_matrix.items()}
+
     def draw(self, win):
         """
-        draw the people
+        draw the people   self.direcMoving
         """
-        idx = math.trunc( self.animation_count/(People.FREQ_ANIMATION/len(self.imgs[self.direcMoving])))
-        self.img = self.imgs[self.direcMoving][idx]
-        self.animation_count += 1
-
-        if self.animation_count >=  People.FREQ_ANIMATION - 1:
-            self.animation_count = 0
+        self.animations[self.direcMoving].update()
 
         self.do()
-        win.blit(self.img, (self.xGrid, self.yGrid))
+        self.img = self.animations[self.direcMoving].img()
+        win.blit(self.img, (self.xGrid, self.yGrid - self.map.xGrid))
+        ##win.blit(self.img[1], (self.xGrid, self.yGrid))
+
         if self.obj!=None:
             self.obj.drawOn(win,self.xGrid-5, self.yGrid)
         if self.popup_status is not None:
             self.popup_status.set_position((self.xGrid-8, self.yGrid), "midleft")
             #self.popup_status.draw(win)
         if self.popup_info is not None:
-            self.popup_info.set_position((self.xGrid-8, self.yGrid), "midleft")
+            self.popup_info.set_position((self.xGrid+8, self.yGrid-25), "midleft")
             self.popup_info.draw(win)
-        offset = 10
+        offset = 15
 
         for (k,n) in self.needs.items():
             n.draw(win, self.xGrid, self.yGrid - offset)
@@ -97,6 +103,7 @@ class People:
             need = self.currentTask.need
 
             if lapsed_secs > 1 :      ## keep as 1 sec instead self.needs[need].adding_sec
+                self.direcMoving = People.ANIMA_WORKING
                 self.start_working_at = pygame.time.get_ticks() 
                 self.working()
         elif  self.status == People.STATUS_LEAVING:
@@ -123,17 +130,17 @@ class People:
         # print("moving to {} {} - {} {}".format(nextXGrid,nextYGrid,self.nextPos[0],self.nextPos[1]))
         # print("on position {} {}".format(self.xGrid,self.yGrid))
         if self.y<self.nextPos[1]:
-            self.direcMoving = People.DIREC_MOVING_DOWN
+            self.direcMoving = People.ANIMA_MOVING_DOWN
             self.yGrid+=veloc/100
         elif self.y>self.nextPos[1]:
-            self.direcMoving = People.DIREC_MOVING_UP
+            self.direcMoving = People.ANIMA_MOVING_UP
             self.yGrid-=veloc/100
 
         if self.x<self.nextPos[0]:
             self.xGrid+=veloc/100
-            self.direcMoving = People.DIREC_MOVING_RIGHT
+            self.direcMoving = People.ANIMA_MOVING_RIGHT
         elif self.x>self.nextPos[0]:
-            self.direcMoving = People.DIREC_MOVING_LEFT
+            self.direcMoving = People.ANIMA_MOVING_LEFT
             self.xGrid-=veloc/100
 
 
@@ -145,7 +152,7 @@ class People:
             self.xGrid=nextXGrid
 
         if self.x==self.nextPos[0] and self.y==self.nextPos[1]:
-            self.direcMoving = People.DIREC_MOVING_STAY
+           # self.direcMoving = People.ANIMA_MOVING_STAY
             self.nextPos=None
         if self.obj!=None:
             self.obj.x=self.x

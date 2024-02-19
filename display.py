@@ -30,3 +30,4 @@ class Display():
         self.update()
         self.loadMap()
         self.clock.tick(60)
+    
