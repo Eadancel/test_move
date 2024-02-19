@@ -5,7 +5,9 @@ from collections import deque
 from map.action import Action
 from ui.ui import Label
 from utils.utils import Animation, extractTilesfromImage
-class People:
+
+from debug import debug
+class People(pygame.sprite.Sprite):
     imgs = []
     TYPE_WORKER = 1
     TYPE_CUSTOMER = 2
@@ -13,8 +15,8 @@ class People:
     STATUS_IDLE = 0
     STATUS_GOINGTO = 1
     STATUS_WORKING = 2
-    STATUS_LEAVING = 4
-    STATUS_DESCRIP = ['IDLE','','WORKING','LEAVING']  ## GOING TO hidden
+    STATUS_LEAVING = 3
+    STATUS_DESCRIP = ['IDLE','GOINGTO','WORKING','LEAVING']  ## GOING TO hidden
 
     ANIMA_MOVING_STAY = 0
     ANIMA_MOVING_UP = 1
@@ -23,14 +25,15 @@ class People:
     ANIMA_MOVING_RIGHT = 4
     ANIMA_WORKING = 5
 
-    FRAME_DURATION = 5
+    FRAME_DURATION = 10
 
-    def __init__(self, x, y, id, type_person,game,font):
+    def __init__(self, x, y, id, type_person,level):
+        super().__init__(level.all_sprites)
         self.x = x
         self.y = y
         self.id = id
-        self.game = game
-        self.map = self.game.map
+        self.game = level
+        self.map = level.map
         self.xGrid = self.map.convertXGridToPX(x)
         self.yGrid = self.map.convertYGridToPX(y)
         self.animation_count = 0
@@ -42,13 +45,13 @@ class People:
         self.currentPath = deque([])
         self.nextPos = None
         self.velocity = 150
-        self.velocity_modif = 1
+        self.velocity_modif = .5
         self.working_force = 100
         self.direcMoving = People.ANIMA_MOVING_STAY
         self.obj=None
         self.default_Task = None
-        self.popup_status = Label(font, "", pygame.Color("black"), (self.xGrid-8, self.yGrid-10), "midleft")
-        self.popup_info = Label(font, "", pygame.Color("black"), (self.xGrid-8, self.yGrid-10), "midleft")
+        self.popup_status = Label(level.lm.labelCustomer, "", pygame.Color("black"), (self.xGrid-8, self.yGrid-10), "midleft")
+        self.popup_info = Label(level.lm.labelCustomer, "", pygame.Color("black"), (self.xGrid-8, self.yGrid-10), "midleft")
         self.start_working_at=0
         self.intensity = 0
         self.needs = {}
@@ -58,45 +61,51 @@ class People:
         self.tileset = pygame.image.load(tileset_fn)
         self.animations = {k: Animation(extractTilesfromImage(self.tileset,v),self.FRAME_DURATION,True) for k, v in img_matrix.items()}
 
-    def draw(self, win):
+    def update(self,level,dt):
         """
         draw the people   self.direcMoving
         """
-        self.animations[self.direcMoving].update()
+        self.animations[self.direcMoving].update(dt)
 
-        self.do()
-        self.img = self.animations[self.direcMoving].img()
-        win.blit(self.img, (self.xGrid, self.yGrid - self.map.xGrid))
+        self.do(dt)
+
+        self.image = self.animations[self.direcMoving].img()
+        self.rect = self.image.get_rect(topleft=(round(self.xGrid), round(self.yGrid)))
+        #win.blit(self.img, (self.xGrid, self.yGrid - self.map.xGrid))
         ##win.blit(self.img[1], (self.xGrid, self.yGrid))
 
         if self.obj!=None:
-            self.obj.drawOn(win,self.xGrid-5, self.yGrid)
+            self.obj.drawOn(self.image,self.xGrid-5, self.yGrid)
         if self.popup_status is not None:
-            self.popup_status.set_position((self.xGrid-8, self.yGrid), "midleft")
+            self.popup_status.set_position((0, 20), "midleft")
             #self.popup_status.draw(win)
         if self.popup_info is not None:
-            self.popup_info.set_position((self.xGrid+8, self.yGrid-25), "midleft")
-            self.popup_info.draw(win)
-        offset = 15
-
+            self.rect.height +=10
+            self.popup_info.set_position((0, 20), "midleft")
+            self.popup_info.draw(self.image)
+        offset = 0
+        self.rect.height +=5*len(self.needs)+5
+        self.rect.y-=5*len(self.needs)+5
         for (k,n) in self.needs.items():
-            n.draw(win, self.xGrid, self.yGrid - offset)
+            
+            n.draw(self.image,0, offset)
             offset+=5
             n.doIncrement(self.intensity)             
             if n.check():
+        
                 
                 task = n.solve(self.game)
                 if task!=None : 
-                    
+
                     self.popup_status.set_text("solving need...{}".format(k))
                     self.assignTask(task)
 
-    def do(self):
+    def do(self, dt):
         self.popup_status.set_text(f"{self.STATUS_DESCRIP[self.status]}")
         if self.status == People.STATUS_IDLE or (self.openForTask and len(self.tasks)>0):
             self.getNextTask()
         elif  self.status == People.STATUS_GOINGTO:
-            self.move()
+            self.move(dt)
         elif  self.status == People.STATUS_WORKING:
 
             lapsed_secs = (pygame.time.get_ticks()-self.start_working_at)/1000
@@ -113,16 +122,16 @@ class People:
         if tsk is not None:
             self.tasks.append(tsk)
 
-    def move(self):
+    def move(self, dt):
         #print(self.currentPath)
         if len(self.currentPath)>0 and self.nextPos==None:
             self.nextPos=tuple(self.currentPath.pop(0))
         if self.nextPos!=None :
-            self.moveTo()
+            self.moveTo(dt)
         else:
             self.status = People.STATUS_IDLE
 
-    def moveTo(self):
+    def moveTo(self,dt):
         veloc = self.velocity * self.velocity_modif
         #print(self.nextPos)
         nextXGrid = self.map.convertXGridToPX(self.nextPos[0])
@@ -131,25 +140,27 @@ class People:
         # print("on position {} {}".format(self.xGrid,self.yGrid))
         if self.y<self.nextPos[1]:
             self.direcMoving = People.ANIMA_MOVING_DOWN
-            self.yGrid+=veloc/100
+            self.yGrid+=veloc * dt
         elif self.y>self.nextPos[1]:
             self.direcMoving = People.ANIMA_MOVING_UP
-            self.yGrid-=veloc/100
+            self.yGrid-=veloc * dt
 
         if self.x<self.nextPos[0]:
-            self.xGrid+=veloc/100
+            self.xGrid+=veloc * dt
             self.direcMoving = People.ANIMA_MOVING_RIGHT
         elif self.x>self.nextPos[0]:
             self.direcMoving = People.ANIMA_MOVING_LEFT
-            self.xGrid-=veloc/100
+            self.xGrid-=veloc * dt
 
-
-        if abs(self.yGrid-nextYGrid)<2:
-            self.y=self.nextPos[1]
-            self.yGrid=nextYGrid
-        if abs(self.xGrid-nextXGrid)<2:
-            self.x=self.nextPos[0]
-            self.xGrid=nextXGrid
+        
+        if abs(self.yGrid-nextYGrid)<1:
+             self.y=self.nextPos[1]
+             self.yGrid=nextYGrid
+        if abs(self.xGrid-nextXGrid)<1:
+             self.x=self.nextPos[0]
+             self.xGrid=nextXGrid
+        moving_xGrid = self.map.convertPXToXGrid(self.xGrid)
+        moving_yGrid = self.map.convertPXToYGrid(self.yGrid)
 
         if self.x==self.nextPos[0] and self.y==self.nextPos[1]:
            # self.direcMoving = People.ANIMA_MOVING_STAY

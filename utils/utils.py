@@ -9,22 +9,26 @@ def extractTilesfromImage(img, tiles=[]):
 
 
 class Animation :
-    def __init__(self, images, img_dur=5, loop=True):
+    def __init__(self, images, aniSpeed=5, loop=True):
         self.images = images
-        self.img_duration = img_dur
+        self.aniSpeed = aniSpeed
         self.loop = loop
         self.done = False
         self.frame = 0
     def copy (self):
-        return Animation(self.images, self.img_duration, self.loop)
-    def update(self):
-        if self.loop:
-            self.frame = (self.frame + 1 ) % (self.img_duration * len(self.images))
-        else:
-            self.frame = min(self.frame +1 , self.img_duration * len(self.images) - 1 )
-            if self.frame >= self.img_duration * len(self.images):
+        return Animation(self.images, self.aniSpeed, self.loop)
+    def update(self, dt):
+        self.frame += self.aniSpeed * dt
+                 
+        if self.frame >= len(self.images):
+            if self.loop:
+                self.frame=0
+            else:
+                self.frame = max(len(self.image)-1,0)
                 self.done=True
 
     def img(self):
-        return self.images[int(self.frame / self.img_duration)]
+        return self.images[int(self.frame)]
+    
+
     

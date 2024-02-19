@@ -21,8 +21,8 @@ img_matrix = {  People.ANIMA_MOVING_STAY:    [(288+i*16,32,16,32) for i in range
 
 
 class Customer (People):
-    def __init__(self,x,y,id,game,font):
-        super().__init__(x,y,id,People.TYPE_CUSTOMER,game,font)
+    def __init__(self,x,y,id,level):
+        super().__init__(x,y,id,People.TYPE_CUSTOMER,level)
         self.imgs = []
         self.openForTask=True
         self.money=random.randint(1,5000)#+3000

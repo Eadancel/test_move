@@ -24,13 +24,14 @@ img_matrix = {  People.ANIMA_MOVING_STAY:    [(288+i*16,32,16,32) for i in range
 
 
 class Worker (People):
-    def __init__(self,x,y,id,map, font):
-        super().__init__(x,y,id,People.TYPE_WORKER,map,font)
+    def __init__(self,x,y,id,level):
+        super().__init__(x,y,id,People.TYPE_WORKER,level)
         self.imgs = []
         self.openForTask=True
         img_tileset = os.path.join("game_assets",f"hotel/characters/worker_{random.randint(1,3)}.png")
         self.load_img_ani(img_matrix, img_tileset)
         self.intensity = random.randint(1,5)
+        #self.needs = {}
         self.needs = {"cleaning": NeedCleaning(), "resting": NeedResting(random.randint(1,10))}
 
     def getNextTask(self):
@@ -43,7 +44,6 @@ class Worker (People):
             self.obj=None
         elif self.current_action["type"]==Action.TYPE_MAKE_VISIBLE:           
             self.game.removeObj(self.current_action["obj"])
-            #self.current_action["obj"].visible = self.current_action["visible"]
             self.obj=None
 
         elif self.current_action["type"] in (Action.TYPE_TASKWORK, Action.TYPE_TASKWORK_OBJ):

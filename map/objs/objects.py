@@ -6,13 +6,14 @@ import random
 
 #pathImgs = ["tile_0251.png","tile_0252.png","tile_0253.png"]
 
-class Objects:
+class Objects(pygame.sprite.Sprite):
     STATUS_NORMAL = 0
     STATUS_DIRTY = 1
     STATUS_CLEANING = 2
     STATUS_LOCKED = 3
 
-    def __init__(self, x, y, o_type, pathImgs):
+    def __init__(self, x, y, o_type, pathImgs, group):
+        super().__init__(group)
         self.x = x
         self.y = y
         self.type = o_type
@@ -22,9 +23,9 @@ class Objects:
         self.status=Objects.STATUS_NORMAL
         for pi in pathImgs:
             self.imgs.append(pygame.image.load(os.path.join("game_assets/Tiles",pi)))
-    def draw(self, win, map):
-        if self.visible:
-            win.blit(self.imgs[self.status], (map.convertXGridToPX(self.x), map.convertYGridToPX(self.y)))
+    def update (self, level, dt):
+        self.image = self.imgs[self.status]
+        self.rect = self.image.get_rect(topleft=(level.map.convertXGridToPX(self.x),level.map.convertYGridToPX(self.y)))
     def drawOn(self, win, xGrid, yGrid):
         if self.visible:
             win.blit(self.imgs[self.status], (xGrid, yGrid ))
@@ -34,15 +35,15 @@ class Objects:
 
 class Garbage(Objects):
     
-    def __init__(self,x,y):
-        super().__init__(x,y,"garbage",["tile_0307.png","tile_0307.png","tile_0307.png"])
+    def __init__(self,x,y, group):
+        super().__init__(x,y,"garbage",["tile_0307.png","tile_0307.png","tile_0307.png"], group)
         self.task = MovetoZoneTaskTakeRelease(self,"garbage","cleaning",Objects.STATUS_DIRTY)
 
 
 class SlotMachine(Objects):
 
-    def __init__(self,x,y):
-        super().__init__(x,y,"gambling",["tile_0223.png","tile_0223.png","tile_0223.png"])
+    def __init__(self,x,y, group):
+        super().__init__(x,y,"gambling",["tile_0223.png","tile_0223.png","tile_0223.png"], group)
         
         self.cost = 100
         self.profit = [0,1,5,20,50,100]
@@ -61,15 +62,15 @@ class SlotMachine(Objects):
 
 class Sofa(Objects):
 
-    def __init__(self,x,y):
-        super().__init__(x,y,"garbage",["tile_0333.png","tile_0333.png","tile_0333.png"])
+    def __init__(self,x,y, group):
+        super().__init__(x,y,"garbage",["tile_0333.png","tile_0333.png","tile_0333.png"], group)
         self.task = self.getTask()
     def getTask(self):
         return MovetoObjWork(self,"resting",40)
     
 class Drink(Objects):
-    def __init__(self,x,y):
-        super().__init__(x,y,"thirst",["tile_0190.png","tile_0307.png","tile_0307.png"])
+    def __init__(self,x,y, group):
+        super().__init__(x,y,"thirst",["tile_0190.png","tile_0307.png","tile_0307.png"], group)
         self.cost = 100
         self.task = self.getTask()
     def getTask(self):

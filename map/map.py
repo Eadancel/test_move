@@ -7,29 +7,15 @@ from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 
 
-# class Node():
-#     """A node class for A* Pathfinding"""
-
-#     def __init__(self, parent=None, position=None):
-#         self.parent = parent
-#         self.position = position
-
-#         self.g = 0
-#         self.h = 0
-#         self.f = 0
-
-#     def __eq__(self, other):
-#         return self.position == other.position
-
 class Map:
-    def __init__(self,display):
+    def __init__(self,map):
 
-        self.runDisplay = display
-        self.xGrid = self.runDisplay.map.gameMap.tilewidth
-        self.yGrid = self.runDisplay.map.gameMap.tileheight
+        self.map = map
+        self.xGrid = self.map.gameMap.tilewidth
+        self.yGrid = self.map.gameMap.tileheight
         self.tasks = []
-        self.walkableTiles = self.runDisplay.map.walkableTiles
-        self.zones = self.runDisplay.map.zones
+        self.walkableTiles = self.map.walkableTiles
+        self.zones = self.map.zones
 
     def convertXGridToPX(self, pos):
         return pos*self.xGrid
