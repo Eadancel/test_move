@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "Restaurante.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -68,20 +68,20 @@
         },
         "Restaurante.tmx": {
             "expandedGroupLayers": [
-                8,
-                4,
-                10,
-                14,
+                22,
                 13,
                 19,
                 6,
-                22
+                8,
+                4,
+                14,
+                10
             ],
             "scale": 1.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 611.3333333333333,
-                "y": 534
+                "x": 610.6666666666666,
+                "y": 533.3333333333333
             }
         },
         "Restaurante.tmx#Interiors_16x16": {
@@ -93,6 +93,7 @@
             "scaleInEditor": 1
         },
         "Restaurante.tmx#abuelo": {
+            "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "SimulatorCity.tmx": {
@@ -117,6 +118,7 @@
     "map.tileWidth": 16,
     "map.width": 60,
     "openFiles": [
+        "Restaurante.tmx"
     ],
     "project": "simulatorCity.tiled-project",
     "recentFiles": [

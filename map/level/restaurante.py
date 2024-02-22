@@ -42,6 +42,7 @@ class LevelRestaurante(Level):
 
 
     def input(self, event):
+        super().input(event)
         if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 xGrid = self.map.convertPXToXGrid(pos[0])

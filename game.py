@@ -1,19 +1,9 @@
 import pygame
 import os, sys
-import pytmx
-from pytmx.util_pygame import load_pygame
-from people.people import People
-from people.worker import Worker
-from people.customer import Customer
-from map.task import Task
-from map.task import CleanObjectRecoverZone
-from map.map import Map 
-from map.objs.objects import Objects, Garbage, Sofa, SlotMachine, Drink
+
 from map.level.restaurante import LevelRestaurante
-from collections import deque
-from ui.ui import Label
 import random
-FPS = 120
+FPS = 600
 
 
 ## "mapaCity.tmx"

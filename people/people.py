@@ -36,6 +36,8 @@ class People(pygame.sprite.Sprite):
         self.map = level.map
         self.xGrid = self.map.convertXGridToPX(x)
         self.yGrid = self.map.convertYGridToPX(y)
+
+        self.pos = pygame.math.Vector2(self.xGrid, self.yGrid)
         self.animation_count = 0
         self.tasks = deque([])
         self.animations = {}
@@ -44,8 +46,8 @@ class People(pygame.sprite.Sprite):
         self.currentTask = None
         self.currentPath = deque([])
         self.nextPos = None
-        self.velocity = 150
-        self.velocity_modif = .5
+        self.velocity = 100
+        self.velocity_modif = 1
         self.working_force = 100
         self.direcMoving = People.ANIMA_MOVING_STAY
         self.obj=None
@@ -136,27 +138,43 @@ class People(pygame.sprite.Sprite):
         #print(self.nextPos)
         nextXGrid = self.map.convertXGridToPX(self.nextPos[0])
         nextYGrid = self.map.convertYGridToPX(self.nextPos[1])
-        # print("moving to {} {} - {} {}".format(nextXGrid,nextYGrid,self.nextPos[0],self.nextPos[1]))
-        # print("on position {} {}".format(self.xGrid,self.yGrid))
+        
+        direction = pygame.math.Vector2()
+
         if self.y<self.nextPos[1]:
             self.direcMoving = People.ANIMA_MOVING_DOWN
-            self.yGrid+=veloc * dt
+            direction.y=1
+            #self.yGrid+=veloc * dt
         elif self.y>self.nextPos[1]:
             self.direcMoving = People.ANIMA_MOVING_UP
-            self.yGrid-=veloc * dt
+            direction.y=-1
+            #self.yGrid-=veloc * dt
+        else:
+            direction.y=0
 
         if self.x<self.nextPos[0]:
-            self.xGrid+=veloc * dt
+            direction.x=1
             self.direcMoving = People.ANIMA_MOVING_RIGHT
+            #self.xGrid+=veloc * dt
         elif self.x>self.nextPos[0]:
+            direction.x=-1
             self.direcMoving = People.ANIMA_MOVING_LEFT
-            self.xGrid-=veloc * dt
+            #self.xGrid-=veloc * dt
+        else:
+            direction.x=0
+        
+        if direction.magnitude()>0 : direction = direction.normalize()
 
         
-        if abs(self.yGrid-nextYGrid)<1:
+        self.pos += direction * veloc * dt
+        
+        self.xGrid = round(self.pos.x)
+        self.yGrid = round(self.pos.y)
+
+        if abs(self.yGrid-nextYGrid)<3:
              self.y=self.nextPos[1]
              self.yGrid=nextYGrid
-        if abs(self.xGrid-nextXGrid)<1:
+        if abs(self.xGrid-nextXGrid)<3:
              self.x=self.nextPos[0]
              self.xGrid=nextXGrid
         moving_xGrid = self.map.convertPXToXGrid(self.xGrid)

@@ -7,7 +7,8 @@ from people.people import People
 from people.worker import Worker
 from people.customer import Customer
 from collections import deque
-import random
+from debug import debug
+from utils.camera import CameraGroup
 PATH_maps = 'game_assets'
 
 class Level():
@@ -23,23 +24,27 @@ class Level():
         self.map_img = self.bkgmap.make_map()
         self.map = Map(self.bkgmap)
         self.info=""
-
-        self.all_sprites = pygame.sprite.Group()
+        self.paused = False
+        self.all_sprites = CameraGroup()
         self.peoples = []
         self.tasks = {}
         self.objects = deque([])
         self.tasks_doing = deque([])
     def run(self,dt):
-        
-        self.update(dt)
-        self.loadMap()
-        
-        self.all_sprites.update(self, dt)
-        self.all_sprites.draw(self.display_surface)
-
+        if not self.paused:
+            self.update(dt)
+            self.loadMap()
+            
+            self.all_sprites.update(self, dt)
+            self.all_sprites.draw(self.display_surface)
+        else:
+            debug("PAUSED")
         self.info = f"People: {len(self.peoples)} Task Cleaning: {len(self.tasks.get('resting',{}))} ZoneGame:{len(self.tasks.get('gambling',{}))} Objects: {len(self.objects)}" 
     def input(self, event):
-        pass
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                self.paused = not self.paused
+        
     def update(self, dt):
         pass
     def loadMap(self):
