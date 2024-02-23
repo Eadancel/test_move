@@ -68,20 +68,17 @@
         },
         "Restaurante.tmx": {
             "expandedGroupLayers": [
-                22,
-                13,
-                19,
-                6,
-                8,
                 4,
-                14,
-                10
+                8,
+                10,
+                22,
+                6
             ],
-            "scale": 1.5,
+            "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 610.6666666666666,
-                "y": 533.3333333333333
+                "x": 452.5,
+                "y": 502
             }
         },
         "Restaurante.tmx#Interiors_16x16": {

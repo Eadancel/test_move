@@ -25,18 +25,16 @@ class Level():
         self.map = Map(self.bkgmap)
         self.info=""
         self.paused = False
-        self.all_sprites = CameraGroup()
+        self.all_sprites = CameraGroup(self.map_img)
         self.peoples = []
         self.tasks = {}
         self.objects = deque([])
         self.tasks_doing = deque([])
     def run(self,dt):
         if not self.paused:
-            self.update(dt)
-            self.loadMap()
-            
+            self.update(dt)       
             self.all_sprites.update(self, dt)
-            self.all_sprites.draw(self.display_surface)
+            self.all_sprites.custom_draw()
         else:
             debug("PAUSED")
         self.info = f"People: {len(self.peoples)} Task Cleaning: {len(self.tasks.get('resting',{}))} ZoneGame:{len(self.tasks.get('gambling',{}))} Objects: {len(self.objects)}" 
@@ -44,6 +42,12 @@ class Level():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 self.paused = not self.paused
+            if event.key ==pygame.K_g:
+                self.all_sprites.target_idx-=1
+            if event.key == pygame.K_h:
+                self.all_sprites.target_idx+=1
+        if event.type == pygame.MOUSEWHEEL:
+            self.all_sprites.zoom_scale +=event.y * 0.03 
         
     def update(self, dt):
         pass

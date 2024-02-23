@@ -1,5 +1,6 @@
 import pygame
-import os, sys
+import os, sys, time
+from debug import debug
 
 from map.level.restaurante import LevelRestaurante
 import random
@@ -17,19 +18,29 @@ class Game:
         self.level = LevelRestaurante()
 
     def run (self):
-
+        previous_time = time.time()
         while True:
-            dt = self.clock.tick(FPS) /1000
+            
+            dt = time.time() - previous_time
+            previous_time = time.time()
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
                 else:
                     self.level.input(event)
-            if dt <  2*1/FPS:    ## in case the window is freezing because is moving (Window behaviour)
-                self.level.run(dt)         
+            
+            if dt <  100/FPS:    ## in case the window is freezing because is moving (Window behaviour)
+                self.level.run(dt)   
+            else:
+                print("drop frame")
+            zoom= self.level.all_sprites.zoom_scale
+            offset = self.level.all_sprites.offset
+            debug(f"{zoom=} {offset=}")      
             pygame.display.set_caption("{:.2f}  Info {}".format(self.clock.get_fps(), self.level.info))
             pygame.display.update()
+            self.clock.tick(FPS)
 
                    
 

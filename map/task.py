@@ -86,7 +86,7 @@ class WanderTask(Task):
                           "zone":zone,
                           "canInterrup":True,
                           "drop":False,
-                          "velocity":0.5}])
+                          "velocity":0.7}])
 
 class MovetoObjWork(Task):
     def __init__(self, obj, need, value):

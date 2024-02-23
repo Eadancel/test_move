@@ -25,7 +25,7 @@ class People(pygame.sprite.Sprite):
     ANIMA_MOVING_RIGHT = 4
     ANIMA_WORKING = 5
 
-    FRAME_DURATION = 10
+    FRAME_DURATION = 20
 
     def __init__(self, x, y, id, type_person,level):
         super().__init__(level.all_sprites)
@@ -134,7 +134,7 @@ class People(pygame.sprite.Sprite):
             self.status = People.STATUS_IDLE
 
     def moveTo(self,dt):
-        veloc = self.velocity * self.velocity_modif
+        veloc = self.velocity + 50*self.velocity_modif
         #print(self.nextPos)
         nextXGrid = self.map.convertXGridToPX(self.nextPos[0])
         nextYGrid = self.map.convertYGridToPX(self.nextPos[1])
@@ -166,10 +166,12 @@ class People(pygame.sprite.Sprite):
         if direction.magnitude()>0 : direction = direction.normalize()
 
         
-        self.pos += direction * veloc * dt
-        
-        self.xGrid = round(self.pos.x)
-        self.yGrid = round(self.pos.y)
+        self.xGrid += (direction.x * veloc * dt)
+        self.yGrid += (direction.y * veloc * dt)
+
+
+        # self.xGrid = round(self.pos.x)
+        # self.yGrid = round(self.pos.y)
 
         if abs(self.yGrid-nextYGrid)<3:
              self.y=self.nextPos[1]
@@ -177,9 +179,9 @@ class People(pygame.sprite.Sprite):
         if abs(self.xGrid-nextXGrid)<3:
              self.x=self.nextPos[0]
              self.xGrid=nextXGrid
-        moving_xGrid = self.map.convertPXToXGrid(self.xGrid)
-        moving_yGrid = self.map.convertPXToYGrid(self.yGrid)
-
+        #moving_xGrid = self.map.convertPXToXGrid(self.xGrid)
+        #moving_yGrid = self.map.convertPXToYGrid(self.yGrid)
+        
         if self.x==self.nextPos[0] and self.y==self.nextPos[1]:
            # self.direcMoving = People.ANIMA_MOVING_STAY
             self.nextPos=None

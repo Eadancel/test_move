@@ -42,13 +42,19 @@ class LevelRestaurante(Level):
 
 
     def input(self, event):
+        LEFT = 1
+        MIDDLE = 2
+        RIGHT = 3
         super().input(event)
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONUP and event.button == MIDDLE :
                 pos = pygame.mouse.get_pos()
-                xGrid = self.map.convertPXToXGrid(pos[0])
-                yGrid = self.map.convertPXToYGrid(pos[1])
-                print(f"adding at {xGrid},{yGrid}")
-                self.addObject(Drink(xGrid, yGrid, self.all_sprites))
+                relative_pos = self.all_sprites.relaPosZoom(pos)
+                print (f"{relative_pos=}")
+                xGrid = self.map.convertPXToXGrid(relative_pos[0])
+                yGrid = self.map.convertPXToYGrid(relative_pos[1])
+                print(f"adding at {xGrid},{yGrid}    {pos=}  {relative_pos=}")
+                if self.map.isWalkable(xGrid,yGrid):
+                    self.addObject(Garbage(xGrid, yGrid, self.all_sprites))
         elif event.type == LevelRestaurante.teAddCustomer:
             if random.randint(1,10)>2 and len(self.peoples)<50 and CREATE_NEW_CUSTOMER:
                 self.addCustomer(32,10)
