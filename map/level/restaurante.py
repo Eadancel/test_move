@@ -10,11 +10,17 @@ from people.worker import Worker
 from settings import *
 import random
 
-CREATE_NEW_CUSTOMER = False
+CREATE_NEW_CUSTOMER = True
+
+
+
 
 class LevelRestaurante(Level):
     teAddCustomer = pygame.USEREVENT+1
     teCheckingGarbage = pygame.USEREVENT+2
+
+
+
     def __init__(self):
         super().__init__(maps_tmx['restaurante'])
         self.lm = LabelManager()
@@ -29,16 +35,20 @@ class LevelRestaurante(Level):
         #self.addCustomer(32,10)
         pygame.time.set_timer(LevelRestaurante.teAddCustomer, 5000)
         pygame.time.set_timer(LevelRestaurante.teCheckingGarbage, 1000)
-        self.addObject(Sofa(38, 10, self.all_sprites))
-        self.addObject(Sofa(42, 15, self.all_sprites))
+
+        #Sofas layer "sofa"
+        for obj in self.bkgmap.gameMap.get_layer_by_name("sofas"):
+            xGrid = self.map.convertPXToXGrid(obj.x)
+            yGrid = self.map.convertPXToYGrid(obj.y)
+            self.addObject(Sofa(xGrid,yGrid, self.all_sprites,[obj.image]))
+
+        for obj in self.bkgmap.gameMap.get_layer_by_name("games"):
+            xGrid = self.map.convertPXToXGrid(obj.x)
+            yGrid = self.map.convertPXToYGrid(obj.y)
+            self.addObject(SlotMachine(xGrid,yGrid, self.all_sprites,[obj.image]))
+        #self.addObject(Sofa(42, 15, self.all_sprites))
         self.addObject(Garbage(52, 10, self.all_sprites))
-        self.addObject(SlotMachine(41,13, self.all_sprites))
-        self.addObject(SlotMachine(43,13, self.all_sprites))
-        self.addObject(SlotMachine(45,13, self.all_sprites))
-        self.addObject(SlotMachine(41,18, self.all_sprites))
-        self.addObject(SlotMachine(43,18, self.all_sprites))
-        self.addObject(SlotMachine(45,18, self.all_sprites))
-        self.addObject(Drink(52,19, self.all_sprites))
+        #self.addObject(Drink(52,19, self.all_sprites))
 
 
     def input(self, event):
@@ -89,5 +99,5 @@ class LevelRestaurante(Level):
         self.peoples.append(Customer(x,y,f"Customer {self.num_customer}",self))
     
     def turnIntoGarbage(self, obj):
-        self.addObject(Garbage(obj.x,obj.y))
+        self.addObject(Garbage(obj.x,obj.y, self.all_sprites))
         self.removeObj(obj)

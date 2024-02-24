@@ -82,6 +82,10 @@ class Level():
             self.addObject(obj)
         else:
             print("not walkable {} {}".format(obj.x,obj.y))
+    
+    def getRelativeMousePos(self):
+        pos = pygame.mouse.get_pos()
+        return self.all_sprites.relaPosZoom(pos)
 
 
 class LabelManager():

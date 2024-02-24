@@ -1,6 +1,7 @@
 import pygame
 
 from debug import debug
+from map.objs.objects import Sofa
 
 class CameraGroup(pygame.sprite.Group):
     def __init__(self, ground_surf):
@@ -35,21 +36,23 @@ class CameraGroup(pygame.sprite.Group):
         self.internal_rect = self.internal_surf.get_rect(center = (self.half_w, self.half_h) )
         self.internal_surface_size_vector = pygame.math.Vector2(self.internal_surf_size)
         self.internal_offset = pygame.math.Vector2()
-        self.internal_offset.x = self.internal_surf_size[0] // 2 - self.half_w
+        self.internal_offset.x = self.internal_surf_size[0] // 2 - self.half_w     # 960/2 - 640   
         self.internal_offset.y = self.internal_surf_size[1] // 2 - self.half_h
 
     def relaPosZoom(self,pos): # Screen position, translate to pos internal surface for tail calculation
-        offset_scaled = self.scaled_rect.topleft
-        internal_rect = self.internal_rect.topleft
         
+        #print (f"{self.offset=} {1 / self.zoom_scale=} {self.scaled_rect.topleft=} {self.internal_offset}")
+        relapos = pos
+        invertScale = 1 / self.zoom_scale
+        offset_zoom = pygame.math.Vector2()
+        offset_zoom.x = ((self.scaled_rect.topleft[0]) * invertScale + self.internal_offset.x) * self.zoom_scale
+        offset_zoom.y = ((self.scaled_rect.topleft[1]) * invertScale + self.internal_offset.y) * self.zoom_scale
 
-        diff_x = center.x - pos.x
-
-
-
-        relapos = ((pygame.math.Vector2(pos) + self.offset - (self.internal_offset) )  * self.zoom_scale  - offset_scaled) //self.zoom_scale
-        print(f"{offset_scaled=}{self.internal_offset=} {self.zoom_scale=} {self.offset=} {self.ground_offset=} {internal_rect=}")
-        return (relapos)
+        relapos_x = round((pos[0]   - offset_zoom.x  ) * invertScale - self.offset.x)
+        relapos_y = round((pos[1]   - offset_zoom.y   ) * invertScale - self.offset.y)
+        #relapos = pos + self.offset
+        #print (f"{relapos_x - pos[0]=} {relapos_y - pos[1]=} {offset_zoom=}")
+        return ((relapos_x,relapos_y))
     
 
 
@@ -75,10 +78,10 @@ class CameraGroup(pygame.sprite.Group):
 
     def keyboard_control(self):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_a]: self.camera_rect.x  -= self.keyboard_speed
-        if keys[pygame.K_d]: self.camera_rect.x  += self.keyboard_speed
-        if keys[pygame.K_w]: self.camera_rect.y  -= self.keyboard_speed
-        if keys[pygame.K_s]: self.camera_rect.y  += self.keyboard_speed 
+        if keys[pygame.K_a]: self.camera_rect.x  += self.keyboard_speed
+        if keys[pygame.K_d]: self.camera_rect.x  -= self.keyboard_speed
+        if keys[pygame.K_w]: self.camera_rect.y  += self.keyboard_speed
+        if keys[pygame.K_s]: self.camera_rect.y  -= self.keyboard_speed 
 
         self.offset.x= self.camera_rect.left - self.camera_borders['left']
         self.offset.y= self.camera_rect.top - self.camera_borders['top']
@@ -95,8 +98,8 @@ class CameraGroup(pygame.sprite.Group):
 
     def zoom_keyboard_control(self):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_q]: self.zoom_scale +=0.1
-        if keys[pygame.K_e]: self.zoom_scale -=0.1
+        if keys[pygame.K_q]: self.zoom_scale -=0.2
+        if keys[pygame.K_e]: self.zoom_scale +=0.2
         if keys[pygame.K_x]: self.zoom_scale =1
 
 
@@ -108,21 +111,31 @@ class CameraGroup(pygame.sprite.Group):
         self.keyboard_control()
         self.mouse_grab_control()
         self.zoom_keyboard_control()
-        self.internal_surf.fill('black')
+        self.internal_surf.fill('red')
 
         #ground
         #self.display_surface.fill('black')
-        self.ground_offset  = self.ground_rect.topleft - self.offset + self.internal_offset
+        self.ground_offset  = self.ground_rect.topleft + self.offset + self.internal_offset
         self.internal_surf.blit(self.ground_surf, self.ground_offset)
-
+        
         # elements
         for sprite in sorted(self.sprites(), key= lambda sprite: sprite.rect.centery):
-            offset_pos = sprite.rect.topleft - self.offset + self.internal_offset
+            offset_pos = sprite.rect.topleft + self.offset + self.internal_offset            
             self.internal_surf.blit(sprite.image, offset_pos)
 
-        self.zoom_scale = min(max(self.zoom_scale,0.7),1.5)
+        self.zoom_scale = min(max(self.zoom_scale,0.5),2)
 
-        self.scaled_surf = pygame.transform.scale (self.internal_surf, self.internal_surface_size_vector*self.zoom_scale)
-        self.scaled_rect = self.scaled_surf.get_rect(center = (self.half_w, self.half_h) )
+        self.scaled_surf = pygame.transform.smoothscale (self.internal_surf, self.internal_surface_size_vector*self.zoom_scale)
+        self.scaled_rect = self.scaled_surf.get_rect(center=(self.half_w,self.half_h) )
+        #self.scaled_rect = self.scaled_surf.get_rect(center = pygame.mouse.get_pos() )
+
+        # mx, my = pygame.mouse.get_pos()
+        # left   = mx + (maprect.left - mx) * self.zoom_scale
+        # right  = mx + (maprect.right - mx) * self.zoom_scale
+        # top    = my + (maprect.top - my) * self.zoom_scale
+        # bottom = my + (maprect.bottom - my) * self.zoom_scale
+        # maprect = pygame.Rect(left, top, right-left, bottom-top)
+
+
        
         self.display_surface.blit(self.scaled_surf, self.scaled_rect )

@@ -26,6 +26,7 @@ class Objects(pygame.sprite.Sprite):
     def update (self, level, dt):
         self.image = self.imgs[self.status]
         self.rect = self.image.get_rect(topleft=(level.map.convertXGridToPX(self.x),level.map.convertYGridToPX(self.y)))
+        
     def drawOn(self, win, xGrid, yGrid):
         if self.visible:
             win.blit(self.imgs[self.status], (xGrid, yGrid ))
@@ -42,9 +43,9 @@ class Garbage(Objects):
 
 class SlotMachine(Objects):
 
-    def __init__(self,x,y, group):
-        super().__init__(x,y,"gambling",["tile_0223.png","tile_0223.png","tile_0223.png"], group)
-        
+    def __init__(self,x,y, group, images):
+        super().__init__(x,y,"gambling",[], group)
+        self.imgs = images
         self.cost = 100
         self.profit = [0,1,5,20,50,100]
         self.luck = [90,5,2,1,0.07,0.03]
@@ -62,8 +63,9 @@ class SlotMachine(Objects):
 
 class Sofa(Objects):
 
-    def __init__(self,x,y, group):
-        super().__init__(x,y,"garbage",["tile_0333.png","tile_0333.png","tile_0333.png"], group)
+    def __init__(self,x,y, group, images):
+        super().__init__(x,y,"resting",[], group)
+        self.imgs = images
         self.task = self.getTask()
     def getTask(self):
         return MovetoObjWork(self,"resting",40)

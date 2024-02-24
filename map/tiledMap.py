@@ -27,7 +27,9 @@ class TiledMap():
                 #     for x, y, gid in layer:
                 #         if gid!=0:
                 #             self.zones[layer.name].append((x,y))
-        for obj in self.gameMap.objects:
+
+        for obj in (self.gameMap.get_layer_by_name("walkable_path")+self.gameMap.get_layer_by_name("zones")):
+            print(obj)
             (xGrid_st, yGrid_st) = (self.convertPXToXGrid(obj.x), self.convertPXToYGrid(obj.y))
             (xGrid_end, yGrid_end) = (self.convertPXToXGrid(obj.x+obj.width), self.convertPXToYGrid(obj.y+obj.height))
             for iX in range(xGrid_st, xGrid_end):
