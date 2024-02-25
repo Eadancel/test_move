@@ -1,6 +1,6 @@
 import pygame
 import os
-from map.task import MovetoZoneTaskTakeRelease, MoveWorkObjMoney, MovetoObjWork, MoveConsumeObjMoney
+from map.task import MovetoObjWorkOffset, MovetoZoneTaskTakeRelease, MoveWorkObjMoney,  MoveConsumeObjMoney
 import random
 
 
@@ -16,20 +16,21 @@ class Objects(pygame.sprite.Sprite):
         super().__init__(group)
         self.x = x
         self.y = y
+        self.zLevel = 0
         self.type = o_type
         self.imgs = []
         self.grabbed = False
         self.visible = True
         self.status=Objects.STATUS_NORMAL
         for pi in pathImgs:
-            self.imgs.append(pygame.image.load(os.path.join("game_assets/Tiles",pi)))
+            self.imgs.append(pygame.image.
+            load(os.path.join("game_assets/Tiles",pi)))
     def update (self, level, dt):
         self.image = self.imgs[self.status]
         self.rect = self.image.get_rect(topleft=(level.map.convertXGridToPX(self.x),level.map.convertYGridToPX(self.y)))
         
     def drawOn(self, win, xGrid, yGrid):
-        if self.visible:
-            win.blit(self.imgs[self.status], (xGrid, yGrid ))
+        win.blit(self.imgs[self.status], (xGrid, yGrid))
     def workOnObj(self):
         pass
     
@@ -39,7 +40,10 @@ class Garbage(Objects):
     def __init__(self,x,y, group):
         super().__init__(x,y,"garbage",["tile_0307.png","tile_0307.png","tile_0307.png"], group)
         self.task = MovetoZoneTaskTakeRelease(self,"garbage","cleaning",Objects.STATUS_DIRTY)
-
+    def update (self, level, dt):
+        if not self.grabbed: 
+            self.image = self.imgs[self.status]
+            self.rect = self.image.get_rect(topleft=(level.map.convertXGridToPX(self.x),level.map.convertYGridToPX(self.y)))
 
 class SlotMachine(Objects):
 
@@ -63,12 +67,13 @@ class SlotMachine(Objects):
 
 class Sofa(Objects):
 
-    def __init__(self,x,y, group, images):
-        super().__init__(x,y,"resting",[], group)
+    def __init__(self,x,y, group, images, type):
+        super().__init__(x,y,type,[], group)
+        self.type=type
         self.imgs = images
         self.task = self.getTask()
     def getTask(self):
-        return MovetoObjWork(self,"resting",40)
+        return MovetoObjWorkOffset(self,self.type,40,(0,1))
     
 class Drink(Objects):
     def __init__(self,x,y, group):

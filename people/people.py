@@ -25,7 +25,7 @@ class People(pygame.sprite.Sprite):
     ANIMA_MOVING_RIGHT = 4
     ANIMA_WORKING = 5
 
-    FRAME_DURATION = 20
+    FRAME_DURATION = 10
 
     def __init__(self, x, y, id, type_person,level):
         super().__init__(level.all_sprites)
@@ -34,9 +34,10 @@ class People(pygame.sprite.Sprite):
         self.id = id
         self.game = level
         self.map = level.map
+        self.zLevel = 0
         self.xGrid = self.map.convertXGridToPX(x)
         self.yGrid = self.map.convertYGridToPX(y)
-
+        self.visible = True
         self.pos = pygame.math.Vector2(self.xGrid, self.yGrid)
         self.animation_count = 0
         self.tasks = deque([])
@@ -46,7 +47,7 @@ class People(pygame.sprite.Sprite):
         self.currentTask = None
         self.currentPath = deque([])
         self.nextPos = None
-        self.velocity = 100
+        self.velocity = 50
         self.velocity_modif = 1
         self.working_force = 100
         self.direcMoving = People.ANIMA_MOVING_STAY
@@ -72,12 +73,13 @@ class People(pygame.sprite.Sprite):
         self.do(dt)
 
         self.image = self.animations[self.direcMoving].img()
-        self.rect = self.image.get_rect(topleft=(round(self.xGrid), round(self.yGrid)))
+        self.rect = self.image.get_rect(topleft=(round(self.xGrid), round(self.yGrid)-1))
         #win.blit(self.img, (self.xGrid, self.yGrid - self.map.xGrid))
         ##win.blit(self.img[1], (self.xGrid, self.yGrid))
 
         if self.obj!=None:
-            self.obj.drawOn(self.image,self.xGrid-5, self.yGrid)
+            self.obj.rect = self.obj.image.get_rect(topleft=(round(self.xGrid), round(self.yGrid+2)))
+            #self.obj.drawOn(self.image,0, 16)
         if self.popup_status is not None:
             self.popup_status.set_position((0, 20), "midleft")
             #self.popup_status.draw(win)
@@ -94,11 +96,8 @@ class People(pygame.sprite.Sprite):
             offset+=5
             n.doIncrement(self.intensity)             
             if n.check():
-        
-                
                 task = n.solve(self.game)
                 if task!=None : 
-
                     self.popup_status.set_text("solving need...{}".format(k))
                     self.assignTask(task)
 
@@ -144,22 +143,18 @@ class People(pygame.sprite.Sprite):
         if self.y<self.nextPos[1]:
             self.direcMoving = People.ANIMA_MOVING_DOWN
             direction.y=1
-            #self.yGrid+=veloc * dt
         elif self.y>self.nextPos[1]:
             self.direcMoving = People.ANIMA_MOVING_UP
             direction.y=-1
-            #self.yGrid-=veloc * dt
         else:
             direction.y=0
 
         if self.x<self.nextPos[0]:
             direction.x=1
             self.direcMoving = People.ANIMA_MOVING_RIGHT
-            #self.xGrid+=veloc * dt
         elif self.x>self.nextPos[0]:
             direction.x=-1
             self.direcMoving = People.ANIMA_MOVING_LEFT
-            #self.xGrid-=veloc * dt
         else:
             direction.x=0
         
@@ -173,17 +168,16 @@ class People(pygame.sprite.Sprite):
         # self.xGrid = round(self.pos.x)
         # self.yGrid = round(self.pos.y)
 
-        if abs(self.yGrid-nextYGrid)<3:
+        if abs(self.yGrid-nextYGrid)<2:
              self.y=self.nextPos[1]
              self.yGrid=nextYGrid
-        if abs(self.xGrid-nextXGrid)<3:
+        if abs(self.xGrid-nextXGrid)<2:
              self.x=self.nextPos[0]
              self.xGrid=nextXGrid
         #moving_xGrid = self.map.convertPXToXGrid(self.xGrid)
         #moving_yGrid = self.map.convertPXToYGrid(self.yGrid)
         
         if self.x==self.nextPos[0] and self.y==self.nextPos[1]:
-           # self.direcMoving = People.ANIMA_MOVING_STAY
             self.nextPos=None
         if self.obj!=None:
             self.obj.x=self.x
@@ -218,8 +212,16 @@ class People(pygame.sprite.Sprite):
             Action.TYPE_RELEASE_ZONE: self.do_RELEASE_ZONE,
             Action.TYPE_RESTORE_TASK: self.do_RESTORE_TASK,
             Action.TYPE_TURN_INTO_GARBAGE : self.do_TURN_INTO_GARBAGE,
+            Action.TYPE_LIFT_OBJ : self.do_LIFT_OBJ,
+            Action.TYPE_PUTDOWN_OBJ : self.do_PUTDOWN_OBJ,
+
         }.get(self.current_action["type"],self.do_INTERNAL)()
 
+
+    def do_LIFT_OBJ(self):
+        self.current_action["obj"].zLevel = self.zLevel+1
+    def do_PUTDOWN_OBJ(self):
+        self.current_action["obj"].zLevel = self.zLevel
     def do_INTERNAL(self):
         pass
     def do_GOTO_X_Y(self):

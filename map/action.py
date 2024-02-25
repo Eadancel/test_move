@@ -16,5 +16,7 @@ class Action():
     TYPE_RESTORE_TASK = 13
     TYPE_TASKWORK_OBJ =14
     TYPE_TURN_INTO_GARBAGE = 15
+    TYPE_LIFT_OBJ = 16
+    TYPE_PUTDOWN_OBJ = 17
     def __init__(self,type,x,y):
         pass

@@ -31,21 +31,28 @@ class LevelRestaurante(Level):
     def setup(self):
         self.num_customer=0
         self.addWorker(30,9,"Worker 1")
-        #self.addWorker(37,15,"Worker 2")
+        self.addWorker(30,9,"Worker 2")
+        self.addWorker(30,9,"Worker 3")
         #self.addCustomer(32,10)
         pygame.time.set_timer(LevelRestaurante.teAddCustomer, 5000)
         pygame.time.set_timer(LevelRestaurante.teCheckingGarbage, 1000)
 
         #Sofas layer "sofa"
-        for obj in self.bkgmap.gameMap.get_layer_by_name("sofas"):
-            xGrid = self.map.convertPXToXGrid(obj.x)
-            yGrid = self.map.convertPXToYGrid(obj.y)
-            self.addObject(Sofa(xGrid,yGrid, self.all_sprites,[obj.image]))
-
-        for obj in self.bkgmap.gameMap.get_layer_by_name("games"):
-            xGrid = self.map.convertPXToXGrid(obj.x)
-            yGrid = self.map.convertPXToYGrid(obj.y)
-            self.addObject(SlotMachine(xGrid,yGrid, self.all_sprites,[obj.image]))
+        try:
+            for obj in self.bkgmap.gameMap.get_layer_by_name("sofas"):
+                #print(dir(obj))
+                xGrid = self.map.convertPXToXGrid(obj.x)
+                yGrid = self.map.convertPXToYGrid(obj.y)
+                self.addObject(Sofa(xGrid,yGrid, self.all_sprites,[obj.image], obj.type))
+        except:
+            print("Error in Sofa")
+        try:
+            for obj in self.bkgmap.gameMap.get_layer_by_name("games"):
+                xGrid = self.map.convertPXToXGrid(obj.x)
+                yGrid = self.map.convertPXToYGrid(obj.y)
+                self.addObject(SlotMachine(xGrid,yGrid, self.all_sprites,[obj.image]))
+        except:
+            print("Error in Games")
         #self.addObject(Sofa(42, 15, self.all_sprites))
         self.addObject(Garbage(52, 10, self.all_sprites))
         #self.addObject(Drink(52,19, self.all_sprites))
@@ -88,8 +95,9 @@ class LevelRestaurante(Level):
 
         for p in self.peoples:
             if p.status == People.STATUS_LEAVING:
-                #print(f"removing customer {p.id}")
-                self.peoples.remove(p)    
+                print(f"removing customer {p.id}")
+                self.peoples.remove(p)
+                p.kill()
 
     def addWorker(self,x,y, id):
         self.peoples.append(Worker(x,y, id,self))

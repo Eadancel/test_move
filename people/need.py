@@ -34,8 +34,8 @@ class Need():
     def check(self):
         return  self.value>=self.threshold and self.status==Need.STATUS_ACTIVE
     def draw(self, win, x,y):
-        pygame.draw.rect(win, (0,128,0), (x, y, 25, 5))
-        pygame.draw.rect(win, (255,0,0), (x, y, int(round(self.percent()/4)), 5))
+        pygame.draw.rect(win, (0,128,0), (x, y, 16, 5))
+        pygame.draw.rect(win, (255,0,0), (x, y, int(self.percent()/100 * 16), 5))
 
     def isSolved(self):
         pass
@@ -84,7 +84,7 @@ class NeedResting(Need):
     def __init__(self, increment):
         super().__init__()
         self.value = 0
-        self.name = "resting"
+        self.name = "staff_resting"
         self.increment = increment
         self.adding_sec = 5
         self.threshold = 100

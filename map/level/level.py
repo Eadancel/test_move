@@ -37,7 +37,7 @@ class Level():
             self.all_sprites.custom_draw()
         else:
             debug("PAUSED")
-        self.info = f"People: {len(self.peoples)} Task Cleaning: {len(self.tasks.get('resting',{}))} ZoneGame:{len(self.tasks.get('gambling',{}))} Objects: {len(self.objects)}" 
+        self.info = f"People: {len(self.peoples)} Task Cleaning: {len(self.tasks.get('staff_resting',{}))} ZoneGame:{len(self.tasks.get('gambling',{}))} Objects: {len(self.objects)}" 
     def input(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:

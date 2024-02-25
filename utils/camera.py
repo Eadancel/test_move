@@ -111,7 +111,7 @@ class CameraGroup(pygame.sprite.Group):
         self.keyboard_control()
         self.mouse_grab_control()
         self.zoom_keyboard_control()
-        self.internal_surf.fill('red')
+        self.internal_surf.fill('black')
 
         #ground
         #self.display_surface.fill('black')
@@ -119,9 +119,12 @@ class CameraGroup(pygame.sprite.Group):
         self.internal_surf.blit(self.ground_surf, self.ground_offset)
         
         # elements
-        for sprite in sorted(self.sprites(), key= lambda sprite: sprite.rect.centery):
-            offset_pos = sprite.rect.topleft + self.offset + self.internal_offset            
-            self.internal_surf.blit(sprite.image, offset_pos)
+        #print("-----")
+        for sprite in sorted(self.sprites(), key= lambda sprite: (sprite.zLevel, sprite.rect.bottom)):
+            #print(sprite, f"{sprite.rect.bottom=} {sprite.zLevel=}")
+            if sprite.visible:
+                offset_pos = sprite.rect.topleft + self.offset + self.internal_offset            
+                self.internal_surf.blit(sprite.image, offset_pos)
 
         self.zoom_scale = min(max(self.zoom_scale,0.5),2)
 

@@ -30,6 +30,8 @@ class MovetoZoneTaskTakeRelease(Task):
               "x"   :obj.x,
               "velocity" :1.1,
               "y"   :obj.y},
+            { "type":Action.TYPE_LIFT_OBJ,
+              "obj" :obj},
             {"type":Action.TYPE_TASKWORK,
               "value":100,},
             { "type":Action.TYPE_TAKE_OBJ,
@@ -43,6 +45,8 @@ class MovetoZoneTaskTakeRelease(Task):
 
             { "type":Action.TYPE_RELEASE_OBJ},
 
+            { "type":Action.TYPE_PUTDOWN_OBJ,
+              "obj" :obj},
             { "type":Action.TYPE_SET_STATUS,
               "obj" :obj,
               "status":status},
@@ -55,8 +59,12 @@ class CleanObjectRecoverZone(Task):
             { "type":Action.TYPE_GOTO_X_Y,
               "x"   :obj.x,
               "y"   :obj.y},
+            { "type":Action.TYPE_LIFT_OBJ,
+              "obj" :obj},
             {"type":Action.TYPE_TASKWORK,
               "value":100,},
+            { "type":Action.TYPE_PUTDOWN_OBJ,
+              "obj" :obj},
             { "type":Action.TYPE_MAKE_VISIBLE,
               "obj" : obj,
               "visible" : False},
@@ -88,15 +96,19 @@ class WanderTask(Task):
                           "drop":False,
                           "velocity":0.5}])
 
-class MovetoObjWork(Task):
-    def __init__(self, obj, need, value):
+
+
+
+
+class MovetoObjWorkOffset(Task):
+    def __init__(self, obj, need, value, offset):
         super().__init__()
         self.need = need
         self.solution = deque([
             { "type":Action.TYPE_GOTO_X_Y,
-              "x"   :obj.x,
+              "x"   :obj.x + offset[0],
               "velocity" :1.1,
-              "y"   :obj.y},
+              "y"   :obj.y + offset[1]},
             {"type":Action.TYPE_TASKWORK,
               "value":value},
             {"type":Action.TYPE_RESTORE_TASK,

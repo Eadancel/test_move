@@ -32,15 +32,17 @@ class Worker (People):
         self.load_img_ani(img_matrix, img_tileset)
         self.intensity = random.randint(1,5)
         #self.needs = {}
-        self.needs = {"cleaning": NeedCleaning(), "resting": NeedResting(random.randint(1,10))}
+        self.needs = {"cleaning": NeedCleaning(), "staff_resting": NeedResting(random.randint(1,10))}
 
     def getNextTask(self):
         super().getNextTask()
         if self.current_action["type"]==Action.TYPE_TAKE_OBJ:
             self.obj=self.current_action["obj"]
             self.obj.grabbed=True
+            #self.obj.visible = False
         elif self.current_action["type"]==Action.TYPE_RELEASE_OBJ:
             self.obj.grabbed=False
+            #self.obj.visible = True
             self.obj=None
         elif self.current_action["type"]==Action.TYPE_MAKE_VISIBLE:           
             self.game.removeObj(self.current_action["obj"])
