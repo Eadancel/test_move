@@ -4,6 +4,8 @@ import pygame
 from map.level.level import Level, LabelManager
 from map.objs.objects import Objects, Garbage, Sofa, SlotMachine, Drink
 from map.task import CleanObjectRecoverZone
+from people.bartender import Bartender
+from people.cleaner import Cleaner
 from people.people import *
 from people.customer import Customer
 from people.worker import Worker
@@ -33,6 +35,7 @@ class LevelRestaurante(Level):
         self.addWorker(30,9,"Worker 1")
         self.addWorker(30,9,"Worker 2")
         self.addWorker(30,9,"Worker 3")
+        self.addBartener(30,9, "Bartender 1")
         #self.addCustomer(32,10)
         pygame.time.set_timer(LevelRestaurante.teAddCustomer, 5000)
         pygame.time.set_timer(LevelRestaurante.teCheckingGarbage, 1000)
@@ -100,7 +103,10 @@ class LevelRestaurante(Level):
                 p.kill()
 
     def addWorker(self,x,y, id):
-        self.peoples.append(Worker(x,y, id,self))
+        self.peoples.append(Cleaner(x,y, id,self))
+    
+    def addBartener(self,x,y, id):
+        self.peoples.append(Bartender(x,y, id,self))
     
     def addCustomer(self,x,y):
         self.num_customer+=1

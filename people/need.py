@@ -25,12 +25,12 @@ class Need():
         self.value -= random.randint(1,value_add)
     def solve(self, game): 
         ## Find a available Task to solve the need.  
-
         task = game.getTaskbyNeed(self.name)
         if task !=None: 
             self.status=Need.STATUS_INACTIVE
         return task
-    
+    def checkPreconditions(self):
+        return True
     def check(self):
         return  self.value>=self.threshold and self.status==Need.STATUS_ACTIVE
     def draw(self, win, x,y):
@@ -78,7 +78,6 @@ class NeedCleaning(Need):
     
     def isSolved(self):
         return self.value<=0
-    
 
 class NeedResting(Need):
     def __init__(self, increment):
@@ -90,3 +89,19 @@ class NeedResting(Need):
         self.threshold = 100
     def isSolved(self):
         return self.value<=0
+
+
+
+class NeedServing(Need):
+    def __init__(self, increment, idSpotTable):
+        super().__init__()
+        self.value = 0
+        self.name = f"serving_{idSpotTable}"
+        self.increment = increment
+        self.adding_sec = 5
+        self.threshold = 100
+    def isSolved(self):
+        return self.value<=0
+    def checkPreconditions(self):
+        ##check if the drink type is available.
+        return True

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.10.2" name="objects" tilewidth="48" tileheight="64" tilecount="246" columns="0">
+<tileset version="1.10" tiledversion="1.10.2" name="objects" tilewidth="48" tileheight="64" tilecount="248" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0">
   <image width="32" height="32" source="../../../../../res/moderninteriors-win/1_Interiors/16x16/Theme_Sorter_Singles/14_Basement_Singles/Basement_Singles_1.png"/>
@@ -738,5 +738,11 @@
  </tile>
  <tile id="245">
   <image width="48" height="64" source="../../../../../res/moderninteriors-win/1_Interiors/16x16/Theme_Sorter_Singles/14_Basement_Singles/Basement_Singles_246.png"/>
+ </tile>
+ <tile id="246">
+  <image width="22" height="19" source="objs/bar/machine_drink_coffe.png"/>
+ </tile>
+ <tile id="247">
+  <image width="15" height="17" source="objs/bar/machine_drink_drink.png"/>
  </tile>
 </tileset>

@@ -6,20 +6,9 @@ from map.action import Action
 from .people import People
 from people.need import Need, NeedCleaning, NeedResting
 import random
-    # ANIMA_MOVING_STAY = 0
-    # ANIMA_MOVING_UP = 1
-    # ANIMA_MOVING_DOWN = 2
-    # ANIMA_MOVING_LEFT = 3
-    # ANIMA_MOVING_RIGHT = 4
-    # chars are 2 tiles tall
-    # each frame is a (topleft corner, frame size)
 
-img_matrix = {  People.ANIMA_MOVING_STAY:    [(288+i*16,32,16,32) for i in range(6)],
-                People.ANIMA_MOVING_UP:      [(96+i*16,64,16,32) for i in range(6)],
-                People.ANIMA_MOVING_DOWN:    [(288+i*16,64,16,32) for i in range(6)],
-                People.ANIMA_MOVING_LEFT:    [(192+i*16,64,16,32) for i in range(6)],
-                People.ANIMA_MOVING_RIGHT:   [(0+i*16,64,16,32) for i in range(6)],
-                People.ANIMA_WORKING:        [(0+i*16,224,16,32) for i in range(12)]}
+
+
 
 
 
@@ -28,11 +17,10 @@ class Worker (People):
         super().__init__(x,y,id,People.TYPE_WORKER,level)
         self.imgs = []
         self.openForTask=True
-        img_tileset = os.path.join("game_assets",f"hotel/characters/worker_{random.randint(1,3)}.png")
-        self.load_img_ani(img_matrix, img_tileset)
+
         self.intensity = random.randint(1,5)
         #self.needs = {}
-        self.needs = {"cleaning": NeedCleaning(), "staff_resting": NeedResting(random.randint(1,10))}
+        self.needs = { "staff_resting": NeedResting(random.randint(1,10))}
 
     def getNextTask(self):
         super().getNextTask()

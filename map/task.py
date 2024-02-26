@@ -155,3 +155,30 @@ class MoveWorkObjMoney(Task):
                            "addGarba":5},
                            {"type":Action.TYPE_RESTORE_TASK,
                             "obj": obj},])
+
+
+class PrepareDrink(Task):   
+    ### Go to machine
+    ### Work on Machine  (cost?)
+    ### Create obj Drink (sin task)
+    ### Take obj
+    ### Move to SpotTable
+    ### Release obj
+    ### Create Task Global 
+
+    def __init__(self, obj, need, value):
+        super().__init__()
+        self.need = need
+        self.obj = obj
+        self.solution = deque([
+                  { "type":Action.TYPE_GOTO_X_Y,   ### Go to machine
+                    "x"   :obj.x,
+                    "velocity" :1.1,
+                    "y"   :obj.y},
+                  {"type":Action.TYPE_TASKWORK_OBJ,  ### Work on Machine  (cost?)
+                    "need":need,
+                    "obj":obj,
+                    "value":value,
+                    "addGarba":5},
+                    {"type":Action.TYPE_RESTORE_TASK,   ### Create obj Drink (sin task)
+                    "obj": obj},])
