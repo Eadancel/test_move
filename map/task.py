@@ -160,25 +160,44 @@ class MoveWorkObjMoney(Task):
 class PrepareDrink(Task):   
     ### Go to machine
     ### Work on Machine  (cost?)
-    ### Create obj Drink (sin task)
-    ### Take obj
-    ### Move to SpotTable
-    ### Release obj
-    ### Create Task Global 
+    ### Create obj Drink (sin task) in a empty spot (with tablespot destiny)
+    ### 
 
-    def __init__(self, obj, need, value):
+    def __init__(self, type, need, value, DeliveryZone, serveOn,status):
         super().__init__()
         self.need = need
-        self.obj = obj
+        self.type = type
+        self.machine = None
+        self.obj = None
+        self.serveOn = serveOn
         self.solution = deque([
-                  { "type":Action.TYPE_GOTO_X_Y,   ### Go to machine
-                    "x"   :obj.x,
-                    "velocity" :1.1,
-                    "y"   :obj.y},
+                  { "type":Action.TYPE_GOTO_MACHINE_TYPE,   ### Go to machine
+                    "machine_type"   :type,
+                    "velocity" :1.1},
+
                   {"type":Action.TYPE_TASKWORK_OBJ,  ### Work on Machine  (cost?)
                     "need":need,
-                    "obj":obj,
+                    "obj":self.machine,
                     "value":value,
                     "addGarba":5},
-                    {"type":Action.TYPE_RESTORE_TASK,   ### Create obj Drink (sin task)
-                    "obj": obj},])
+
+                  { "type":Action.TYPE_CREATE_MACHINE_OBJ_ASSIGN,
+                    "serveOn" :self.serveOn},
+
+                  { "type":Action.TYPE_TAKE_OBJ,
+                    "obj" :self.obj},
+
+                  { "type":Action.TYPE_GOTO_ZONE,
+                    "zone" :DeliveryZone,
+                    "velocity" :1.1,
+                    "mode" : "nearest",
+                    "drop" : True},
+
+                  { "type":Action.TYPE_RELEASE_OBJ},
+
+                  { "type":Action.TYPE_PUTDOWN_OBJ,
+                    "obj" :self.obj},
+
+                  { "type":Action.TYPE_SET_STATUS,
+                    "obj" :self.obj,
+                    "status":status},])

@@ -87,10 +87,10 @@ class CameraGroup(pygame.sprite.Group):
         self.offset.y= self.camera_rect.top - self.camera_borders['top']
 
     def mouse_grab_control(self):
-        state = pygame.mouse.get_pressed()
-        if state[2]:
-            relaPos = pygame.mouse.get_pos()  # relative pos
-            self.camera_rect.center = relaPos
+        # state = pygame.mouse.get_pressed()
+        # if state[2]:
+        #     relaPos = pygame.mouse.get_pos()  # relative pos
+        #     self.camera_rect.center = relaPos
         
 
         self.offset.x= self.camera_rect.left - self.camera_borders['left']

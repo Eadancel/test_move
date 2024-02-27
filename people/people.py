@@ -244,7 +244,8 @@ class People(pygame.sprite.Sprite):
 
     def do_SET_STATUS(self):
         self.current_action["obj"].status = self.current_action["status"]
-    
+        self.do_RESTORE_TASK()    ## change status and trigger task
+
     def do_PEOPLE_STATUS(self):
         self.status = self.current_action["status"]     
     

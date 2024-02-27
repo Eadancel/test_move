@@ -63,7 +63,7 @@ class Level():
     
     def addObject(self, obj):
         self.objects.append(obj)
-        self.addTask(obj.task)
+        if obj.task: self.addTask(obj.task)
 
     def removeObj(self, obj):
         self.objects.remove(obj)
@@ -77,6 +77,7 @@ class Level():
                 return None
         else:
             return None
+
     def addObjectAt(self, obj):
         if self.map.isWalkable(obj.x,obj.y):
             self.addObject(obj)

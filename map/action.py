@@ -18,5 +18,8 @@ class Action():
     TYPE_TURN_INTO_GARBAGE = 15
     TYPE_LIFT_OBJ = 16
     TYPE_PUTDOWN_OBJ = 17
+    TYPE_GOTO_MACHINE_TYPE =18
+    TYPE_CREATE_MACHINE_OBJ_ASSIGN = 19
+    TYPE_LAUCH_OBJ_TASK = 20
     def __init__(self,type,x,y):
         pass

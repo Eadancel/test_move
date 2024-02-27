@@ -1,6 +1,6 @@
 import pygame
 import os
-from map.task import MovetoObjWorkOffset, MovetoZoneTaskTakeRelease, MoveWorkObjMoney,  MoveConsumeObjMoney
+from map.task import CleanObjectRecoverZone, MovetoObjWorkOffset, MovetoZoneTaskTakeRelease, MoveWorkObjMoney,  MoveConsumeObjMoney
 import random
 
 
@@ -11,7 +11,8 @@ class Objects(pygame.sprite.Sprite):
     STATUS_DIRTY = 1
     STATUS_CLEANING = 2
     STATUS_LOCKED = 3
-
+    STATUS_TOBE_SERVED = 4
+    STATUS_READY = 5
     def __init__(self, x, y, o_type, pathImgs, group):
         super().__init__(group)
         self.x = x
@@ -39,11 +40,18 @@ class Garbage(Objects):
     
     def __init__(self,x,y, group):
         super().__init__(x,y,"garbage",["tile_0307.png","tile_0307.png","tile_0307.png"], group)
-        self.task = MovetoZoneTaskTakeRelease(self,"garbage","cleaning",Objects.STATUS_DIRTY)
+        self.task = self.getTask()
     def update (self, level, dt):
         if not self.grabbed: 
             self.image = self.imgs[self.status]
             self.rect = self.image.get_rect(topleft=(level.map.convertXGridToPX(self.x),level.map.convertYGridToPX(self.y)))
+    def getTask(self):
+        if self.status == Drink.STATUS_NORMAL:
+            return MovetoZoneTaskTakeRelease(self,"garbage","cleaning",Objects.STATUS_DIRTY)
+        elif self.status == Objects.STATUS_DIRTY:
+            return CleanObjectRecoverZone(self,"garbage")
+        else:
+            print("NO STATUS FOUND")
 
 class SlotMachine(Objects):
 
@@ -65,6 +73,22 @@ class SlotMachine(Objects):
         if ganancia>0 :  print(f"{ganancia=}") 
         return  ganancia - cost  
 
+class Machine(Objects):
+    def __init__(self,x,y, group, images, type, name,pos):
+        super().__init__(x,y,type,[], group)
+        self.type=type
+        self.available = True
+        self.machine_type=name
+        self.imgs = images
+        self.task = self.getTask()
+        self.pos = pos
+    def getTask(self):
+        return None
+    def update (self, level, dt):
+        if not self.grabbed: 
+            self.image = self.imgs[self.status]
+            self.rect = self.image.get_rect(topleft=(self.pos))
+
 class Sofa(Objects):
 
     def __init__(self,x,y, group, images, type):
@@ -76,12 +100,19 @@ class Sofa(Objects):
         return MovetoObjWorkOffset(self,self.type,40,(0,1))
     
 class Drink(Objects):
-    def __init__(self,x,y, group):
+    def __init__(self,x,y, group, serveOn):
         super().__init__(x,y,"thirst",["tile_0190.png","tile_0307.png","tile_0307.png"], group)
+        self.status = Drink.STATUS_TOBE_SERVED
         self.cost = 100
         self.task = self.getTask()
+        self.serveOn = serveOn
     def getTask(self):
-        return MoveConsumeObjMoney(self,"thirst",40)
+        if self.status == Drink.STATUS_TOBE_SERVED:
+            return MovetoZoneTaskTakeRelease(self,self.serveOn,"serving", Drink.STATUS_READY) 
+        elif self.status == Drink.STATUS_READY:
+            return MoveConsumeObjMoney(self,"thirst",40) 
     def workOnObj(self):
         ganancia = 0
         return  ganancia - self.cost  
+    
+

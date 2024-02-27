@@ -68,29 +68,30 @@
         },
         "Restaurante.tmx": {
             "expandedGroupLayers": [
-                10,
-                22,
-                6,
                 8,
-                19,
+                14,
+                6,
                 4,
-                14
+                10,
+                19,
+                22,
+                13
             ],
             "expandedObjectLayers": [
                 33,
-                34,
-                19
+                19,
+                34
             ],
-            "scale": 2,
-            "selectedLayer": 26,
+            "scale": 4,
+            "selectedLayer": 30,
             "viewCenter": {
                 "x": 480,
-                "y": 479.75
+                "y": 479.875
             }
         },
         "Restaurante.tmx#Interiors_16x16": {
             "dynamicWrapping": false,
-            "scaleInDock": 1.5,
+            "scaleInDock": 3,
             "scaleInEditor": 1
         },
         "Restaurante.tmx#Room_Builder_16x16": {
@@ -122,8 +123,8 @@
         },
         "TEST.tmx": {
             "expandedObjectLayers": [
-                3,
-                2
+                2,
+                3
             ],
             "scale": 2,
             "selectedLayer": 1,

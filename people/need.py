@@ -90,7 +90,17 @@ class NeedResting(Need):
     def isSolved(self):
         return self.value<=0
 
-
+class NeedPrepare(Need):
+    def __init__(self):
+        super().__init__()
+        self.value = 0
+        self.name = "prepare_drink"
+        self.increment = 50
+        self.adding_sec = 1
+        self.threshold = 100
+    
+    def isSolved(self):
+        return self.value<=0
 
 class NeedServing(Need):
     def __init__(self, increment, idSpotTable):
