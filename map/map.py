@@ -60,6 +60,7 @@ class Map:
         return self.distance ( pos1[0],pos1[1], pos2[0], pos2[1])
 
     def getWalkablePathFromToGrid(self,x1,y1,x2,y2):
+
         self.grid = Grid(matrix=self.walkableTiles)
         start = self.grid.node(x1,y1)
         end = self.grid.node(x2,y2)

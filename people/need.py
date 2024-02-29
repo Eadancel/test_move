@@ -103,15 +103,13 @@ class NeedPrepare(Need):
         return self.value<=0
 
 class NeedServing(Need):
-    def __init__(self, increment, idSpotTable):
+    def __init__(self):
         super().__init__()
         self.value = 0
-        self.name = f"serving_{idSpotTable}"
-        self.increment = increment
-        self.adding_sec = 5
+        self.name = "serving"
+        self.increment = 50
+        self.adding_sec = 1
         self.threshold = 100
+    
     def isSolved(self):
         return self.value<=0
-    def checkPreconditions(self):
-        ##check if the drink type is available.
-        return True

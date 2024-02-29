@@ -214,6 +214,7 @@ class People(pygame.sprite.Sprite):
             Action.TYPE_TURN_INTO_GARBAGE : self.do_TURN_INTO_GARBAGE,
             Action.TYPE_LIFT_OBJ : self.do_LIFT_OBJ,
             Action.TYPE_PUTDOWN_OBJ : self.do_PUTDOWN_OBJ,
+            Action.TYPE_GOTO_OBJ : self.do_GOTO_OBJ,
 
         }.get(self.current_action["type"],self.do_INTERNAL)()
 
@@ -224,6 +225,14 @@ class People(pygame.sprite.Sprite):
         self.current_action["obj"].zLevel = self.zLevel
     def do_INTERNAL(self):
         pass
+    
+    def do_GOTO_OBJ(self):
+        pos=self.current_action["obj"].getSpot()
+        self.status = People.STATUS_GOINGTO
+        print(f"{self.x, self.y, pos[0], pos[1]}")
+        self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, pos[0], pos[1]) 
+        print(f"{self.currentPath}")
+        
     def do_GOTO_X_Y(self):
         self.status = People.STATUS_GOINGTO
         self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, self.current_action["x"], self.current_action["y"])     

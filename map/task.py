@@ -25,6 +25,7 @@ class MovetoZoneTaskTakeRelease(Task):
     def __init__(self, obj, zone, need, status):
         super().__init__()
         self.need = need
+        print(f"moving to {zone}")
         self.solution = deque([
             { "type":Action.TYPE_GOTO_X_Y,
               "x"   :obj.x,
@@ -160,19 +161,20 @@ class MoveWorkObjMoney(Task):
 class PrepareDrink(Task):   
     ### Go to machine
     ### Work on Machine  (cost?)
-    ### Create obj Drink (sin task) in a empty spot (with tablespot destiny)
+    ### Create obj Drink (sin task)
     ### 
 
-    def __init__(self, type, need, value, DeliveryZone, serveOn,status):
+    def __init__(self, machine, need, value,delivery,  serveOn):
         super().__init__()
         self.need = need
         self.type = type
-        self.machine = None
+        self.machine = machine
         self.obj = None
         self.serveOn = serveOn
+        self.delivery = delivery
         self.solution = deque([
-                  { "type":Action.TYPE_GOTO_MACHINE_TYPE,   ### Go to machine
-                    "machine_type"   :type,
+                  { "type":Action.TYPE_GOTO_OBJ,
+                    "obj"   :self.machine,
                     "velocity" :1.1},
 
                   {"type":Action.TYPE_TASKWORK_OBJ,  ### Work on Machine  (cost?)
@@ -181,23 +183,28 @@ class PrepareDrink(Task):
                     "value":value,
                     "addGarba":5},
 
-                  { "type":Action.TYPE_CREATE_MACHINE_OBJ_ASSIGN,
-                    "serveOn" :self.serveOn},
+                   { "type":Action.TYPE_CREATE_MACHINE_OBJ_ASSIGN,
+                     "machine" : machine,
+                     "delivery" : self.delivery,
+                     "serveOn" :self.serveOn},
 
-                  { "type":Action.TYPE_TAKE_OBJ,
-                    "obj" :self.obj},
+                  # { "type":Action.TYPE_TAKE_OBJ,
+                  #   "obj" :self.obj},
 
-                  { "type":Action.TYPE_GOTO_ZONE,
-                    "zone" :DeliveryZone,
-                    "velocity" :1.1,
-                    "mode" : "nearest",
-                    "drop" : True},
+                  # { "type":Action.TYPE_GOTO_ZONE,
+                  #   "zone" :DeliveryZone,
+                  #   "velocity" :1.1,
+                  #   "mode" : "nearest",
+                  #   "drop" : True},
 
-                  { "type":Action.TYPE_RELEASE_OBJ},
+                  # { "type":Action.TYPE_RELEASE_OBJ},
 
-                  { "type":Action.TYPE_PUTDOWN_OBJ,
-                    "obj" :self.obj},
+                  # { "type":Action.TYPE_PUTDOWN_OBJ,
+                  #   "obj" :self.obj},
 
-                  { "type":Action.TYPE_SET_STATUS,
-                    "obj" :self.obj,
-                    "status":status},])
+                  # { "type":Action.TYPE_SET_STATUS,
+                  #   "obj" :self.obj,
+                  #   "status":status},
+                    
+                    ])
+      

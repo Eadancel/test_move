@@ -1,5 +1,6 @@
 
 
+import ast
 import pygame
 from map.level.level import Level, LabelManager
 from map.objs.objects import Machine, Objects, Garbage, Sofa, SlotMachine, Drink
@@ -59,8 +60,16 @@ class LevelRestaurante(Level):
 
 
         for obj in self.bkgmap.gameMap.get_layer_by_name("drinks"):
+            
             if obj.type=='machine':
-                machine = Machine(0,0,self.all_sprites,[obj.image],obj.type, obj.name,(obj.x, obj.y))
+                if str(obj.properties.get('offset')):
+                    offset = ast.literal_eval(str(obj.properties.get('offset'))) 
+                else:
+                    offset=(0,0)
+                x= self.map.convertPXToXGrid(obj.x) + offset[0]
+                y= self.map.convertPXToYGrid(obj.y) + offset[1]
+                machine = Machine(x,y,
+                                  self.all_sprites,[obj.image],obj.type, obj.name,(obj.x, obj.y))
                 #self.machines[machine.machine_type] = machine
                 self.addMachine(machine)
 
@@ -103,7 +112,7 @@ class LevelRestaurante(Level):
                 xGrid = self.map.convertPXToXGrid(relative_pos[0])
                 yGrid = self.map.convertPXToYGrid(relative_pos[1])
                 print(f"adding OrderDrink at {xGrid},{yGrid}    {pos=}  {relative_pos=}")
-                self.createOrderDrink((xGrid,yGrid))
+                self.createOrderDrink((xGrid,yGrid),"coffee")
         elif event.type == LevelRestaurante.teAddCustomer:
             if random.randint(1,10)>2 and len(self.peoples)<50 and CREATE_NEW_CUSTOMER:
                 self.addCustomer(32,10)
@@ -145,11 +154,16 @@ class LevelRestaurante(Level):
         self.addObject(Garbage(obj.x,obj.y, self.all_sprites))
         self.removeObj(obj)
     
-    def createOrderDrink(self,pos):
+    def createOrderDrink(self,serveOn, type):
+
         #create new zone:
         newZone="Order 1"
         if newZone not in self.map.zones.keys():
                 self.map.zones[newZone]=deque([])
-                self.map.zones[newZone].append(pos)
-        self.addTask(PrepareDrink("coffee","prepare_drink",50,"drink_delivery",newZone, Drink.STATUS_READY))
+                self.map.zones[newZone].append(serveOn)
+
+        print("getting machine")
+        machine = self.getAvailableMachine(type)
+        self.addTask(PrepareDrink(machine,"prepare_drink",50,"drink_delivery",newZone))
+        
         

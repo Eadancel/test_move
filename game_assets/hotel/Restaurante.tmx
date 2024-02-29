@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="36" nextobjectid="110">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="36" nextobjectid="112">
  <tileset firstgid="1" name="Interiors_16x16" tilewidth="16" tileheight="16" tilecount="17024" columns="16">
   <image source="Interiors_16x16.png" width="256" height="17024"/>
  </tileset>
@@ -737,11 +737,11 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,4133,4134,4134,4134,4130,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,4228,4229,4230,4231,4146,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,4146,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,4162,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,4227,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,4133,4134,4134,4134,4134,4134,4134,4130,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,4228,4229,4230,4231,0,0,0,4146,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,4146,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,4162,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,4227,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1178,7 +1178,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup color="#dd22b4" id="28" name="walkable_path" class="walkable_path" visible="0" locked="1">
+ <objectgroup color="#dd22b4" id="28" name="walkable_path" class="walkable_path" visible="0">
   <object id="1" type="walkable_path" x="480" y="144" width="400" height="160"/>
   <object id="2" type="walkable_path" x="800" y="304" width="80" height="640"/>
   <object id="11" type="walkable_path" x="336" y="656" width="416" height="288"/>
@@ -1192,7 +1192,9 @@
   <object id="22" type="walkable_path" x="656" y="416" width="96" height="48"/>
   <object id="25" type="walkable_path" x="720" y="464" width="32" height="48"/>
   <object id="26" type="walkable_path" x="576" y="480" width="64" height="32"/>
-  <object id="31" type="walkable_path" x="80" y="144" width="352" height="160"/>
+  <object id="31" type="walkable_path" x="176" y="144" width="256" height="160"/>
+  <object id="110" type="walkable_path" x="80" y="208" width="96" height="96"/>
+  <object id="111" type="walkable_path" x="80" y="144" width="96" height="64"/>
   <object id="32" type="walkable_path" x="80" y="352" width="352" height="192"/>
   <object id="33" type="walkable_path" x="16" y="656" width="272" height="288"/>
   <object id="34" type="walkable_path" x="432" y="208" width="48" height="32"/>
@@ -1205,7 +1207,7 @@
   <object id="27" name="out" type="out" x="832" y="928" width="16" height="16"/>
   <object id="30" name="garbage" type="garbage" x="32" y="912" width="48" height="32"/>
   <object id="103" name="bar" type="bar" x="80" y="144" width="352" height="160"/>
-  <object id="109" type="drink_delivery" x="160" y="144" width="16" height="48"/>
+  <object id="109" type="drink_delivery" x="208" y="144" width="16" height="48"/>
  </objectgroup>
  <objectgroup id="33" name="games" locked="1">
   <object id="38" type="slot_machine" gid="27766" x="560" y="192" width="16" height="48"/>
@@ -1227,7 +1229,7 @@
   <object id="52" type="staff_resting" gid="27568" x="256" y="384" width="16" height="32"/>
   <object id="53" type="d" gid="27569" x="272" y="384" width="16" height="32"/>
  </objectgroup>
- <objectgroup id="35" name="drinks">
+ <objectgroup id="35" name="drinks" locked="1">
   <object id="55" gid="27642" x="224" y="304" width="32" height="48"/>
   <object id="56" type="drink_chair" gid="27643" x="256" y="304" width="16" height="48"/>
   <object id="88" type="drink_chair" gid="27643" x="272" y="304" width="16" height="48"/>
@@ -1244,8 +1246,16 @@
   <object id="100" gid="27673" x="304" y="224" width="16" height="16"/>
   <object id="101" gid="27673" x="304" y="240" width="16" height="16"/>
   <object id="102" gid="27674" x="304" y="272" width="16" height="32"/>
-  <object id="104" name="coffee" type="machine" gid="27795" x="144.25" y="140" width="22" height="19"/>
-  <object id="106" name="drink" type="machine" gid="27796" x="112.5" y="139" width="15" height="17"/>
+  <object id="104" name="coffee" type="machine" gid="27795" x="144.25" y="140" width="22" height="19">
+   <properties>
+    <property name="offset" value="(0,2)"/>
+   </properties>
+  </object>
+  <object id="106" name="drink" type="machine" gid="27796" x="112.5" y="139" width="15" height="17">
+   <properties>
+    <property name="offset" value="(0,2)"/>
+   </properties>
+  </object>
  </objectgroup>
  <layer id="30" name="chars" width="60" height="60">
   <data encoding="csv">

@@ -2,7 +2,7 @@ import random
 import pygame, os
 from map.task import WanderTask
 from map.action import Action
-from people.need import NeedPrepare
+from people.need import NeedPrepare, NeedServing
 from people.people import People
 
 from people.worker import Worker
@@ -28,6 +28,7 @@ class Bartender(Worker):
         img_tileset = os.path.join("game_assets",f"hotel/characters/bartender_{random.randint(1,3)}.png")
         self.load_img_ani(img_matrix, img_tileset)
         self.needs['prepare_drink']=NeedPrepare()
+        self.needs['serving']=NeedServing()
 
     def getDefaultTask(self):
         return WanderTask("bar")
@@ -36,16 +37,17 @@ class Bartender(Worker):
         super().getNextTask()
         if self.current_action["type"]==Action.TYPE_GOTO_MACHINE_TYPE:
             ## get next machine
-            machine = self.game.getAvailableMachine(self.current_action['machine_type'])
-            self.currentTask.machine=machine
-            self.status = People.STATUS_GOINGTO
-            xDest = self.game.map.convertPXToXGrid(machine.pos[0])
-            yDest = self.game.map.convertPXToYGrid(machine.pos[1])
-            self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, xDest, yDest)     
-            self.currentTask.machine.available=False
+            pass           
 
         elif self.current_action["type"]==Action.TYPE_CREATE_MACHINE_OBJ_ASSIGN:
-            self.obj= self.currentTask.machine.getNewObj()
-            self.currentTask.machine.available=True
-            self.currentTask.obj = self.obj
-            self.obj.grabbed=True
+            machine = self.current_action["machine"]
+            machine.available=True
+            delivery = self.current_action["delivery"]
+            serveOn = self.current_action["serveOn"]
+
+            new_obj= machine.getNewObj(self.game.all_sprites, delivery, serveOn)
+            
+            self.game.addObject(new_obj)
+
+
+

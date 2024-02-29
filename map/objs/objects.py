@@ -11,6 +11,7 @@ class Objects(pygame.sprite.Sprite):
     STATUS_DIRTY = 1
     STATUS_CLEANING = 2
     STATUS_LOCKED = 3
+    STATUS_TO_DELIVERY = 4
     STATUS_TOBE_SERVED = 4
     STATUS_READY = 5
     def __init__(self, x, y, o_type, pathImgs, group):
@@ -24,8 +25,8 @@ class Objects(pygame.sprite.Sprite):
         self.visible = True
         self.status=Objects.STATUS_NORMAL
         for pi in pathImgs:
-            self.imgs.append(pygame.image.
-            load(os.path.join("game_assets/Tiles",pi)))
+            self.imgs.append(pygame.image.load(os.path.join("game_assets/Tiles",pi)))
+
     def update (self, level, dt):
         self.image = self.imgs[self.status]
         self.rect = self.image.get_rect(topleft=(level.map.convertXGridToPX(self.x),level.map.convertYGridToPX(self.y)))
@@ -74,7 +75,7 @@ class SlotMachine(Objects):
         return  ganancia - cost  
 
 class Machine(Objects):
-    def __init__(self,x,y, group, images, type, name,pos):
+    def __init__(self,x,y, group, images, type, name, pos):
         super().__init__(x,y,type,[], group)
         self.type=type
         self.available = True
@@ -89,6 +90,12 @@ class Machine(Objects):
             self.image = self.imgs[self.status]
             self.rect = self.image.get_rect(topleft=(self.pos))
 
+    def getSpot(self):
+        return (self.x, self.y)
+    
+    def getNewObj(self, group, delivery,serveOn):
+        return Drink(self.x, self.x,self.type, group, delivery,serveOn)
+
 class Sofa(Objects):
 
     def __init__(self,x,y, group, images, type):
@@ -100,14 +107,23 @@ class Sofa(Objects):
         return MovetoObjWorkOffset(self,self.type,40,(0,1))
     
 class Drink(Objects):
-    def __init__(self,x,y, group, serveOn):
-        super().__init__(x,y,"thirst",["tile_0190.png","tile_0307.png","tile_0307.png"], group)
-        self.status = Drink.STATUS_TOBE_SERVED
+    def __init__(self,x,y,type, group,delivery_zone, serveOn):
+        super().__init__(x,y,"thirst",["tile_0190.png","tile_0307.png","tile_0307.png","tile_0307.png","tile_0307.png","tile_0307.png"], group)
+        self.status = Drink.STATUS_TO_DELIVERY
         self.cost = 100
-        self.task = self.getTask()
         self.serveOn = serveOn
+        self.delivery_zone = delivery_zone
+        self.type=type
+        self.task = self.getTask()
+        self.image = self.imgs[self.status]
+        self.rect = self.image.get_rect(topleft=(0,0))
     def getTask(self):
-        if self.status == Drink.STATUS_TOBE_SERVED:
+        ###  to Delivery : from Machine to Deliveryzone
+        ###  to Servive  : from DeliveryZone to TableSpot (ServeOn)
+        ###  Ready to be consumer : Task for customer to consume the obj
+        if self.status == Drink.STATUS_TO_DELIVERY:
+            return MovetoZoneTaskTakeRelease(self,self.delivery_zone,"serving", Drink.STATUS_TOBE_SERVED) 
+        elif self.status == Drink.STATUS_TOBE_SERVED:
             return MovetoZoneTaskTakeRelease(self,self.serveOn,"serving", Drink.STATUS_READY) 
         elif self.status == Drink.STATUS_READY:
             return MoveConsumeObjMoney(self,"thirst",40) 
