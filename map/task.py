@@ -98,7 +98,7 @@ class WanderTask(Task):
                     "zone": zone,
                     "canInterrup": True,
                     "drop": False,
-                    "velocity": 0.5,
+                    "velocity": 0.3,
                 }
             ]
         )
