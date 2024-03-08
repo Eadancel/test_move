@@ -1,8 +1,10 @@
 
+from typing import Dict
 import pygame
 import math
 from collections import deque
 from map.action import Action
+from people.need import Need
 from ui.ui import Label
 from utils.utils import Animation, extractTilesfromImage
 
@@ -57,7 +59,7 @@ class People(pygame.sprite.Sprite):
         self.popup_info = Label(level.lm.labelCustomer, "", pygame.Color("black"), (self.xGrid-8, self.yGrid-10), "midleft")
         self.start_working_at=0
         self.intensity = 0
-        self.needs = {}
+        self.needs:Dict[str, Need] = {}
             
 
     def load_img_ani(self,img_matrix, tileset_fn):
@@ -231,7 +233,7 @@ class People(pygame.sprite.Sprite):
         self.status = People.STATUS_GOINGTO
         print(f"{self.x, self.y, pos[0], pos[1]}")
         self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, pos[0], pos[1]) 
-        print(f"{self.currentPath}")
+        #print(f"{self.currentPath}")
         
     def do_GOTO_X_Y(self):
         self.status = People.STATUS_GOINGTO

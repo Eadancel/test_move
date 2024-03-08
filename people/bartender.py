@@ -39,6 +39,9 @@ class Bartender(Worker):
             ## get next machine
             pass           
 
+        elif self.current_action["type"]==Action.TYPE_LOCKED_MACHINE:
+            machine = self.current_action["machine"]
+            machine.available=False
         elif self.current_action["type"]==Action.TYPE_CREATE_MACHINE_OBJ_ASSIGN:
             machine = self.current_action["machine"]
             machine.available=True

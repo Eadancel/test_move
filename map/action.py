@@ -22,5 +22,6 @@ class Action():
     TYPE_CREATE_MACHINE_OBJ_ASSIGN = 19
     TYPE_LAUCH_OBJ_TASK = 20
     TYPE_GOTO_OBJ = 21
+    TYPE_LOCKED_MACHINE = 22
     def __init__(self,type,x,y):
         pass
