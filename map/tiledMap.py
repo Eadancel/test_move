@@ -42,9 +42,7 @@ class TiledMap:
                 #         if gid!=0:
                 #             self.zones[layer.name].append((x,y))
 
-        for obj in self.gameMap.get_layer_by_name(
-            "walkable_path"
-        ) + self.gameMap.get_layer_by_name("zones"):
+        for obj in self.gameMap.get_layer_by_name("walkable_path") + self.gameMap.get_layer_by_name("zones"):
             (xGrid_st, yGrid_st) = (
                 self.convertPXToXGrid(obj.x),
                 self.convertPXToYGrid(obj.y),
@@ -60,6 +58,9 @@ class TiledMap:
                     if obj.type not in self.zones.keys():
                         self.zones[obj.type] = deque([])
                     self.zones[obj.type].append((iX, iY))
+                    # { pos : (), in:(), out:()}
+                    # or
+                    # offset[obj.type] = {in:(), out:()}
 
         print("h{} w{}".format(len(self.walkableTiles), len(self.walkableTiles[0])))
         # print(self.walkableTiles)

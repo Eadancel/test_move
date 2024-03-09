@@ -217,6 +217,9 @@ class People(pygame.sprite.Sprite):
             Action.TYPE_LIFT_OBJ : self.do_LIFT_OBJ,
             Action.TYPE_PUTDOWN_OBJ : self.do_PUTDOWN_OBJ,
             Action.TYPE_GOTO_OBJ : self.do_GOTO_OBJ,
+            Action.TYPE_GOTO_CONTAINER: self.do_GOTO_CONTAINER,
+            Action.TYPE_ADDOBJ_CONTAINER: self.do_ADDOBJ_CONTAINER,
+            Action.TYPE_DELOBJ_CONTAINER: self.do_DELOBJ_CONTAINER,
 
         }.get(self.current_action["type"],self.do_INTERNAL)()
 
@@ -234,6 +237,20 @@ class People(pygame.sprite.Sprite):
         print(f"{self.x, self.y, pos[0], pos[1]}")
         self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, pos[0], pos[1]) 
         #print(f"{self.currentPath}")
+        
+    def do_GOTO_CONTAINER(self):
+        if self.current_action["spot"]=='in':
+            pos=self.current_action["container"].pos_in
+        else:
+            pos=self.current_action["container"].pos_out
+        self.status = People.STATUS_GOINGTO
+        print(f"{self.x, self.y, pos[0], pos[1]}")
+        self.currentPath = self.map.getWalkablePathFromToGrid(self.x, self.y, pos[0], pos[1]) 
+    def do_ADDOBJ_CONTAINER(self):
+        self.current_action["container"].addObj(self.current_action["obj"])
+
+    def do_DELOBJ_CONTAINER(self):
+        self.current_action["container"].removeObj(self.current_action["obj"])
         
     def do_GOTO_X_Y(self):
         self.status = People.STATUS_GOINGTO

@@ -1,6 +1,5 @@
 import math
 
-from collections import deque
 from random import sample
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
@@ -67,9 +66,8 @@ class Map:
 
         finder = AStarFinder(diagonal_movement=DiagonalMovement.always)
         path, runs = finder.find_path(start, end, self.grid)
-
-        #print('operations:', runs, 'path length:', len(path))
-        #print (path)
-        #print(self.grid.grid_str(path=path, start=start, end=end))
+        
+        if not self.isWalkable(x2,y2):
+            print(f"{len(path)=} {path=}")
 
         return path

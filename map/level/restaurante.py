@@ -4,7 +4,7 @@ import random
 import pygame
 
 from map.level.level import LabelManager, Level
-from map.objs.objects import (Drink, Garbage, Machine, Objects, SlotMachine,
+from map.objs.objects import (Container, Drink, Garbage, Machine, Objects, SlotMachine,
                               Sofa)
 from map.task import CleanObjectRecoverZone, PrepareDrink
 from people.bartender import Bartender
@@ -25,6 +25,7 @@ class LevelRestaurante(Level):
         super().__init__(maps_tmx["restaurante"])
         self.lm = LabelManager()
         self.machines = {}
+        self.containers = {}
         self.setup()
         self.pending_tasks=[]
     def setup(self):
@@ -71,28 +72,37 @@ class LevelRestaurante(Level):
 
                 x = self.map.convertPXToXGrid(obj.x) + offset[0]
                 y = self.map.convertPXToYGrid(obj.y) + offset[1]
-                machine = Machine(
-                    x,
-                    y,
-                    self.all_sprites,
-                    [obj.image],
-                    obj.type,
-                    obj.name,
-                    (obj.x, obj.y),
-                )
+                machine = Machine( x, y, self.all_sprites, [obj.image], obj.type, obj.name, (obj.x, obj.y))
                 machine.offset_prod=offset_prod
                 self.addMachine(machine)
+            if obj.type == "container":
+                x = self.map.convertPXToXGrid(obj.x)
+                y = self.map.convertPXToYGrid(obj.y)
+                container = Container(x,y,self.all_sprites, [obj.image], obj.type, obj.name, (obj.x, obj.y))
+                if str(obj.properties.get("spot_in"))!="":
+                    container.pos_in =  ast.literal_eval(obj.properties.get("spot_in"))
+                
+                if str(obj.properties.get("spot_out"))!="":
+                    container.pos_out = ast.literal_eval(obj.properties.get("spot_out"))
+                self.addContainer(container)
 
         # self.addObject(Sofa(42, 15, self.all_sprites))
         self.addObject(Garbage(52, 10, self.all_sprites))
         # self.addObject(Drink(52,19, self.all_sprites))
 
-    def addMachine(self, machine):
+    def addMachine(self,machine ):
         if machine.machine_type in self.machines:
             self.machines[machine.machine_type].append(machine)
         else:
             self.machines[machine.machine_type] = []
             self.machines[machine.machine_type].append(machine)
+
+    def addContainer(self,container):
+        if container.container_type in self.containers:
+            self.containers[container.container_type].append(container)
+        else:
+            self.containers[container.container_type] = []
+            self.containers[container.container_type].append(container)
 
     def getAvailableMachine(self, machine_type):
         #print(self.machines)
@@ -101,6 +111,20 @@ class LevelRestaurante(Level):
             if m.available:
                 return m
         return None
+
+    def getAvailableContainer(self, container_type):
+
+        for c in self.containers.get(container_type, []):
+            if c.checkAvailableSlot():
+                return c
+        return None
+
+    def getAvailableContSlots(self,container_type):
+        l = ""
+        for c in self.containers.get(container_type, []):
+            l = l + f" {len(c.objs)}"
+
+        return l
 
     def input(self, event):
         LEFT = 1
@@ -173,13 +197,17 @@ class LevelRestaurante(Level):
 
         for type,serveOn in self.pending_tasks:
             machine = self.getAvailableMachine(type)
-            if machine :
+            cont_delivery = self.getAvailableContainer("drink_delivery")
+            cont_serveOn = self.getAvailableContainer("drink_serveOn")
 
-                newZone = f"Order {serveOn}"
-                if newZone not in self.map.zones.keys():
-                    self.map.zones[newZone] = deque([])
-                    self.map.zones[newZone].append(serveOn)
-                self.addTask(
-                    PrepareDrink(machine, "prepare_drink", 25, "drink_delivery", newZone)
-                )
-                self.pending_tasks.remove((type,serveOn))
+            if machine:
+                if cont_delivery:
+                    if cont_serveOn :
+                        #newZone = f"Order {serveOn}"
+                        #if newZone not in self.map.zones.keys():
+                        #    self.map.zones[newZone] = deque([])
+                        #    self.map.zones[newZone].append(serveOn)
+                        self.addTask(
+                            PrepareDrink(machine, "prepare_drink", 25, cont_delivery, cont_serveOn)
+                        )
+                        self.pending_tasks.remove((type,serveOn))

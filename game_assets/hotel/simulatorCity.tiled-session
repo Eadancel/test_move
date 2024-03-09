@@ -68,30 +68,30 @@
         },
         "Restaurante.tmx": {
             "expandedGroupLayers": [
-                10,
-                6,
+                14,
                 4,
+                22,
+                6,
                 19,
                 8,
                 13,
-                14,
-                22
+                10
             ],
             "expandedObjectLayers": [
                 34,
-                33,
-                19
+                19,
+                33
             ],
-            "scale": 2,
-            "selectedLayer": 18,
+            "scale": 4,
+            "selectedLayer": 30,
             "viewCenter": {
-                "x": 154.75,
-                "y": 149
+                "x": 480,
+                "y": 479.875
             }
         },
         "Restaurante.tmx#Interiors_16x16": {
             "dynamicWrapping": false,
-            "scaleInDock": 3,
+            "scaleInDock": 5.5,
             "scaleInEditor": 1
         },
         "Restaurante.tmx#Room_Builder_16x16": {

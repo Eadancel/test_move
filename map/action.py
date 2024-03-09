@@ -23,5 +23,8 @@ class Action():
     TYPE_LAUCH_OBJ_TASK = 20
     TYPE_GOTO_OBJ = 21
     TYPE_LOCKED_MACHINE = 22
+    TYPE_GOTO_CONTAINER = 23
+    TYPE_ADDOBJ_CONTAINER = 24
+    TYPE_DELOBJ_CONTAINER = 25
     def __init__(self,type,x,y):
         pass

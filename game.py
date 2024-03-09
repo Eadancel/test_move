@@ -1,5 +1,3 @@
-import os
-import random
 import sys
 import time
 
@@ -44,7 +42,7 @@ class Game:
                 print("drop frame")
             posMS = pygame.mouse.get_pos()
             debug(
-                f"{self.level.getRelativeMousePos()} {posMS=} Zoom:{self.level.all_sprites.zoom_scale} offsetScaled{self.level.all_sprites.scaled_rect.topleft} Internal{self.level.all_sprites.internal_offset}"
+                f"{self.level.getAvailableContSlots('drink_delivery')}"
             )
             pygame.display.set_caption(
                 "{:.2f}  Info {}".format(self.clock.get_fps(), self.level.info)

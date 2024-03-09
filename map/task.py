@@ -51,6 +51,88 @@ class MovetoZoneTaskTakeRelease(Task):
             ]
         )
 
+class MoveObjToContainer(Task):
+    def __init__(self, obj, container, need, status):
+        super().__init__()
+        self.need = need
+        print(f"moving to {container}")
+        self.solution = deque(
+            [
+                {"type": Action.TYPE_GOTO_X_Y, "x": obj.x, "velocity": 1.1, "y": obj.y},
+                {"type": Action.TYPE_LIFT_OBJ, "obj": obj},
+                {
+                    "type": Action.TYPE_TASKWORK,
+                    "value": 200,
+                },
+                {"type": Action.TYPE_TAKE_OBJ, "obj": obj},
+                {
+                    "type": Action.TYPE_GOTO_CONTAINER,
+                    "container": container,
+                    "spot": "in",
+                    "velocity": 1.1,
+                    "drop": True,
+                    "obj" : obj
+                },
+                {
+                    "type": Action.TYPE_ADDOBJ_CONTAINER,
+                    "container": container,
+                    "obj" : obj
+                },
+
+                {"type": Action.TYPE_RELEASE_OBJ},
+                {"type": Action.TYPE_PUTDOWN_OBJ, "obj": obj},
+                {"type": Action.TYPE_SET_STATUS, "obj": obj, "status": status},
+            ]
+        )
+
+class MoveObjFromContainerToContainer(Task):
+    def __init__(self, obj,origin, destination, need, status):
+        super().__init__()
+        self.need = need
+        print(f"moving from {origin} to {destination}")
+        self.solution = deque(
+            [
+                {
+                    "type": Action.TYPE_GOTO_CONTAINER,
+                    "container": origin,
+                    "spot": "out",
+                    "velocity": 1.1,
+                    "drop": True,
+                    "obj" : obj
+                },
+                {
+                    "type": Action.TYPE_DELOBJ_CONTAINER,
+                    "container": origin,
+                    "obj" : obj
+                },
+
+                {"type": Action.TYPE_LIFT_OBJ, "obj": obj},
+                {
+                    "type": Action.TYPE_TASKWORK,
+                    "value": 200,
+                },
+                {"type": Action.TYPE_TAKE_OBJ, "obj": obj},
+                {
+                    "type": Action.TYPE_GOTO_CONTAINER,
+                    "container": destination,
+                    "spot": "in",
+                    "velocity": 1.1,
+                    "drop": True,
+                    "obj" : obj
+                },
+                {
+                    "type": Action.TYPE_ADDOBJ_CONTAINER,
+                    "container": destination,
+                    "obj" : obj
+                },
+
+                {"type": Action.TYPE_RELEASE_OBJ},
+                {"type": Action.TYPE_PUTDOWN_OBJ, "obj": obj},
+                {"type": Action.TYPE_SET_STATUS, "obj": obj, "status": status},
+            ]
+        )
+
+
 
 class CleanObjectRecoverZone(Task):
     def __init__(self, obj, zone):

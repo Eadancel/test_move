@@ -22,9 +22,9 @@ class Worker(People):
         if self.current_action["type"] == Action.TYPE_TAKE_OBJ:
             self.obj = self.current_action["obj"]
             self.obj.grabbed = True
-            if self.obj.getCurrentZone():
-                print(f"releasing from {self.obj.getCurrentZone()}")
-                self.map.restoreSpotZone(self.obj.x, self.obj.y, self.obj.getCurrentZone())
+#            if self.obj.getCurrentZone():
+#                print(f"releasing from {self.obj.getCurrentZone()}")
+#                self.map.restoreSpotZone(self.obj.x, self.obj.y, self.obj.getCurrentZone())
             # self.obj.visible = False
         elif self.current_action["type"] == Action.TYPE_RELEASE_OBJ:
             self.obj.grabbed = False

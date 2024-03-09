@@ -93,6 +93,7 @@ class LabelManager():
     def __init__(self):
         self.labelCustomer = pygame.font.Font(None, 12)
         self.labelTitle = pygame.font.Font(None, 20)
+        self.labelMini = pygame.font.Font(None, 20)
 
 
 # Worker(30,9,"Worker 1",self,self.lm.labelCustomer), 

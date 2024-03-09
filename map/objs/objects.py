@@ -1,10 +1,11 @@
 import os
 import random
-
+from debug import debug
+from ui.ui import Label
 import pygame
 
-from map.task import (CleanObjectRecoverZone, MoveConsumeObjMoney,
-                      MovetoObjWorkOffset, MovetoZoneTaskTakeRelease,
+from map.task import (CleanObjectRecoverZone, MoveConsumeObjMoney, MoveObjToContainer,
+                      MovetoObjWorkOffset, MovetoZoneTaskTakeRelease,MoveObjFromContainerToContainer,
                       MoveWorkObjMoney)
 
 # pathImgs = ["tile_0251.png","tile_0252.png","tile_0253.png"]
@@ -49,6 +50,46 @@ class Objects(pygame.sprite.Sprite):
 
     def getCurrentZone(self):
         return None
+
+class Container(Objects):
+    def __init__(self,x,y,group, images, type, name, pos):
+        super().__init__(x, y, type, [], group)
+        self.objs = []
+        self.limit_obj = 1
+        self.status = Objects.STATUS_NORMAL
+        self.container_type = name
+        self.imgs = images
+        self.pos = pos
+        self.pos_in = (x,y)  # position where Persons need to go to insert new obj to container
+        self.pos_out = (x,y) #  position where Persons need to go to take a new obj to container
+    def checkAvailableSlot(self):
+        return self.limit_obj-len(self.objs)>=1
+
+    def addObj (self, obj):
+        if  self.checkAvailableSlot(): 
+            self.objs.append(obj)
+            return obj
+        else:
+            return None
+
+    def removeObj(self, obj):
+        print(f"remove {obj}")
+        self.objs.remove(obj)
+    
+    def update(self, level, dt):
+        if not self.grabbed:
+            self.image = self.imgs[self.status]
+            self.rect = self.image.get_rect(topleft=(self.pos))
+        debug(f"hola.{len(self.objs)}")
+        offset=0
+        for o in self.objs:
+            o.zLevel = self.zLevel+1
+            o.rect = o.image.get_rect(topleft=(
+                level.map.convertXGridToPX(self.x+offset),
+                level.map.convertYGridToPX(self.y+offset+15),
+            ))
+            offset+=3
+
 
 
 class Garbage(Objects):
@@ -172,12 +213,12 @@ class Drink(Objects):
         ###  to Servive  : from DeliveryZone to TableSpot (ServeOn)
         ###  Ready to be consumer : Task for customer to consume the obj
         if self.status == Drink.STATUS_TO_DELIVERY:
-            return MovetoZoneTaskTakeRelease(
+            return MoveObjToContainer(
                 self, self.delivery_zone, "serving", Drink.STATUS_TOBE_SERVED
             )
         elif self.status == Drink.STATUS_TOBE_SERVED:
-            return MovetoZoneTaskTakeRelease(
-                self, self.serveOn, "serving", Drink.STATUS_READY
+            return MoveObjFromContainerToContainer(
+                self, self.delivery_zone, self.serveOn, "serving", Drink.STATUS_READY
             )
         elif self.status == Drink.STATUS_READY:
             return MoveConsumeObjMoney(self, "thirst", 40)

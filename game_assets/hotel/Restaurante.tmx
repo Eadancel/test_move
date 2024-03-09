@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="36" nextobjectid="112">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="36" nextobjectid="117">
  <tileset firstgid="1" name="Interiors_16x16" tilewidth="16" tileheight="16" tilecount="17024" columns="16">
   <image source="Interiors_16x16.png" width="256" height="17024"/>
  </tileset>
@@ -1187,11 +1187,11 @@
   <object id="14" type="walkable_path" x="480" y="352" width="272" height="64"/>
   <object id="15" type="walkable_path" x="752" y="496" width="48" height="32"/>
   <object id="19" type="walkable_path" x="480" y="512" width="272" height="32"/>
-  <object id="20" type="walkable_path" x="480" y="416" width="96" height="96"/>
+  <object id="20" type="walkable_path" x="480" y="416" width="80" height="96"/>
   <object id="21" type="walkable_path" x="640" y="416" width="16" height="96"/>
   <object id="22" type="walkable_path" x="656" y="416" width="96" height="48"/>
   <object id="25" type="walkable_path" x="720" y="464" width="32" height="48"/>
-  <object id="26" type="walkable_path" x="576" y="480" width="64" height="32"/>
+  <object id="26" type="walkable_path" x="560" y="480" width="80" height="32"/>
   <object id="31" type="walkable_path" x="176" y="144" width="256" height="160"/>
   <object id="110" type="walkable_path" x="80" y="208" width="96" height="96"/>
   <object id="111" type="walkable_path" x="80" y="144" width="96" height="64"/>
@@ -1202,12 +1202,17 @@
   <object id="36" type="walkable_path" x="288" y="752" width="48" height="32"/>
   <object id="37" type="walkable_path" x="432" y="448" width="48" height="32"/>
  </objectgroup>
- <objectgroup id="29" name="zones">
+ <objectgroup id="29" name="zones" visible="0">
   <object id="17" name="garbage" type="garbage" x="112" y="864" width="80" height="80"/>
   <object id="27" name="out" type="out" x="832" y="928" width="16" height="16"/>
   <object id="30" name="garbage" type="garbage" x="32" y="912" width="48" height="32"/>
   <object id="103" name="bar" type="bar" x="80" y="144" width="352" height="160"/>
-  <object id="109" name="drink_delivery" type="drink_delivery" x="208" y="208" width="16" height="48"/>
+  <object id="109" name="drink_delivery" type="drink_delivery" x="208" y="208" width="16" height="48">
+   <properties>
+    <property name="offset_in" value="(-1,0)"/>
+    <property name="offset_out" value="(1,0)"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="33" name="games" locked="1">
   <object id="38" type="slot_machine" gid="27766" x="560" y="192" width="16" height="48"/>
@@ -1229,12 +1234,37 @@
   <object id="52" type="staff_resting" gid="27568" x="256" y="384" width="16" height="32"/>
   <object id="53" type="d" gid="27569" x="272" y="384" width="16" height="32"/>
  </objectgroup>
- <objectgroup id="35" name="drinks" locked="1">
-  <object id="55" gid="27642" x="224" y="304" width="32" height="48"/>
-  <object id="56" type="drink_chair" gid="27643" x="256" y="304" width="16" height="48"/>
-  <object id="88" type="drink_chair" gid="27643" x="272" y="304" width="16" height="48"/>
-  <object id="89" type="drink_chair" gid="27643" x="288" y="304" width="16" height="48"/>
-  <object id="57" gid="27644" x="304" y="304" width="16" height="48"/>
+ <objectgroup id="35" name="drinks">
+  <object id="55" name="drink_serveOn" type="container" gid="27642" x="224" y="304" width="32" height="48">
+   <properties>
+    <property name="spot_in" value="(15,16)"/>
+    <property name="spot_out" value="(15,16)"/>
+   </properties>
+  </object>
+  <object id="56" name="drink_serveOn" type="container" gid="27643" x="256" y="304" width="16" height="48">
+   <properties>
+    <property name="spot_in" value="(16,16)"/>
+    <property name="spot_out" value="(16,16)"/>
+   </properties>
+  </object>
+  <object id="88" name="drink_serveOn" type="container" gid="27643" x="272" y="304" width="16" height="48">
+   <properties>
+    <property name="spot_in" value="(17,16)"/>
+    <property name="spot_out" value="(17,16)"/>
+   </properties>
+  </object>
+  <object id="89" name="drink_serveOn" type="container" gid="27643" x="288" y="304" width="16" height="48">
+   <properties>
+    <property name="spot_in" value="(18,16)"/>
+    <property name="spot_out" value="(18,16)"/>
+   </properties>
+  </object>
+  <object id="57" name="drink_serveOn" type="container" gid="27644" x="304" y="304" width="16" height="48">
+   <properties>
+    <property name="spot_in" value="(19,16)"/>
+    <property name="spot_out" value="(19,16)"/>
+   </properties>
+  </object>
   <object id="58" type="drink_chair" gid="27657" x="240" y="304" width="16" height="32"/>
   <object id="59" type="drink_chair" gid="27657" x="256" y="304" width="16" height="32"/>
   <object id="90" type="drink_chair" gid="27657" x="288" y="304" width="16" height="32"/>
@@ -1256,6 +1286,30 @@
    <properties>
     <property name="offset" value="(0,2)"/>
     <property name="offset_prod" value="(-1,2)"/>
+   </properties>
+  </object>
+  <object id="112" name="drink_delivery" type="container" gid="27639" x="208" y="208" width="32" height="48">
+   <properties>
+    <property name="spot_in" value="(14,10)"/>
+    <property name="spot_out" value="(14,12)"/>
+   </properties>
+  </object>
+  <object id="113" name="drink_delivery" type="container" gid="27640" x="240" y="208" width="16" height="48">
+   <properties>
+    <property name="spot_in" value="(15,10)"/>
+    <property name="spot_out" value="(15,12)"/>
+   </properties>
+  </object>
+  <object id="114" name="drink_delivery" type="container" gid="27640" x="256" y="208" width="16" height="48">
+   <properties>
+    <property name="spot_in" value="(16,10)"/>
+    <property name="spot_out" value="(16,12)"/>
+   </properties>
+  </object>
+  <object id="115" name="drink_delivery" type="container" gid="27641" x="272" y="208" width="16" height="48">
+   <properties>
+    <property name="spot_in" value="(17,10)"/>
+    <property name="spot_out" value="(17,12)"/>
    </properties>
   </object>
  </objectgroup>
