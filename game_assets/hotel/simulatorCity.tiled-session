@@ -68,25 +68,25 @@
         },
         "Restaurante.tmx": {
             "expandedGroupLayers": [
-                14,
-                4,
-                22,
-                6,
                 19,
                 8,
                 13,
-                10
+                4,
+                14,
+                6,
+                10,
+                22
             ],
             "expandedObjectLayers": [
                 34,
                 19,
                 33
             ],
-            "scale": 4,
+            "scale": 0.75,
             "selectedLayer": 30,
             "viewCenter": {
-                "x": 311.375,
-                "y": 327.5
+                "x": 219.33333333333326,
+                "y": 456
             }
         },
         "Restaurante.tmx#Interiors_16x16": {
@@ -123,8 +123,8 @@
         },
         "TEST.tmx": {
             "expandedObjectLayers": [
-                2,
-                3
+                3,
+                2
             ],
             "scale": 2,
             "selectedLayer": 1,
