@@ -34,16 +34,12 @@ class Game:
                 else:
                     self.level.input(event)
 
-            if (
-                dt < 100 / FPS
-            ):  ## in case the window is freezing because is moving (Window behaviour)
+            if (dt < 100 / FPS):  ## in case the window is freezing because is moving (Window behaviour)
                 self.level.run(dt)
             else:
                 print("drop frame")
             posMS = pygame.mouse.get_pos()
-            debug(
-                f"{self.level.getAvailableContSlots('drink_delivery')}"
-            )
+            debug(f"{self.level.getAvailableContSlots('drink_delivery')}")
             pygame.display.set_caption(
                 "{:.2f}  Info {}".format(self.clock.get_fps(), self.level.info)
             )
