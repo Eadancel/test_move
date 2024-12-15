@@ -6,7 +6,8 @@ def extractTilesfromImage(img, tiles=[]):
 
     return imgs
 
-
+def add_tuples (pos1, pos2):
+    return tuple(map(lambda i, j: i + j, pos1, pos2))
 
 class Animation :
     def __init__(self, images, aniSpeed=5, loop=True):

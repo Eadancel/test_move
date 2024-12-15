@@ -1,12 +1,11 @@
 import os
 import random
-from debug import debug
-from ui.ui import Label
 import pygame
 
 from map.task import (CleanObjectRecoverZone, MoveConsumeObjMoney, MoveObjToContainer,
                       MovetoObjWorkOffset, MovetoZoneTaskTakeRelease,MoveObjFromContainerToContainer,
                       MoveWorkObjMoney)
+from utils.utils import add_tuples
 
 # pathImgs = ["tile_0251.png","tile_0252.png","tile_0253.png"]
 
@@ -57,7 +56,7 @@ class Container(Objects):
     def __init__(self,obj,group):
         super().__init__(obj.get("stGridx"), obj.get("stGridy"), obj.get("type"), [], group,obj.get("drawOn"))
         self.objs = []
-        self.limit_obj = 1
+        self.limit_obj = 3
         self.status = Objects.STATUS_NORMAL
         self.container_type = obj.get("name")
         self.imgs = [obj.get("image")]
@@ -79,14 +78,11 @@ class Container(Objects):
     
     def update(self,level, dt):
         super().update(level, dt)
-        offset=0
+        offset=(0,0)
         for o in self.objs:
             o.zLevel = self.zLevel+1
-            o.rect = o.image.get_rect(topleft=(
-                level.map.convertXGridToPX(self.x+offset),
-                level.map.convertYGridToPX(self.y+offset+15),
-            ))
-            offset+=3
+            o.rect = o.image.get_rect(topleft=add_tuples(self.drawOn, offset))
+            offset=add_tuples(offset,(0,3))
 
 
 
