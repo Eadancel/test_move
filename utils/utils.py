@@ -24,7 +24,7 @@ class Animation :
             if self.loop:
                 self.frame=0
             else:
-                self.frame = max(len(self.image)-1,0)
+                self.frame = max(len(self.images)-1,0)
                 self.done=True
 
     def img(self):

@@ -9,7 +9,6 @@ from people.customer import Customer
 from collections import deque
 from debug import debug
 from utils.camera import CameraGroup
-PATH_maps = 'game_assets'
 
 class Level():
     """ This is the class that makes the changes that you want to display. You would add most of your changes here.
@@ -19,20 +18,17 @@ class Level():
 
         self.displayRunning = True
         self.display_surface = pygame.display.get_surface()
-        self.pathMap = pathMap
-        self.bkgmap = TiledMap(os.path.join(PATH_maps,self.pathMap))
-        self.map_img = self.bkgmap.make_map()
-        self.map = Map(self.bkgmap)
+        self.map = Map(pathMap)
         self.info=""
         self.paused = False
-        self.all_sprites = CameraGroup(self.map_img)
+        self.all_sprites = CameraGroup(self.map.map_img)
         self.peoples = []
         self.tasks = {}
         self.objects = deque([])
         self.tasks_doing = deque([])
-    def run(self,dt):
+    def update(self,dt):
         if not self.paused:
-            self.update(dt)       
+            #self.update(dt)       
             self.all_sprites.update(self, dt)
             self.all_sprites.custom_draw()
         else:
@@ -49,11 +45,9 @@ class Level():
         if event.type == pygame.MOUSEWHEEL:
             self.all_sprites.zoom_scale +=event.y * 0.03 
         
-    def update(self, dt):
-        pass
     def loadMap(self):
         #self.map_rect = self.map_img.get_rect()
-        self.display_surface.blit(self.map_img,(0,0))
+        self.display_surface.blit(self.map.map_img,(0,0))
 
     def addTask(self, task):
         if task.need in self.tasks:
@@ -61,6 +55,10 @@ class Level():
         else:
             self.tasks[task.need] = deque([task])
     
+    def addObjectOnMap(self, obj):
+        obj.drawOn = (self.map.convertXGridToPX(obj.x), self.map.convertYGridToPX(obj.y))
+        self.addObject(obj)
+
     def addObject(self, obj):
         self.objects.append(obj)
         if obj.task: self.addTask(obj.task)
@@ -80,7 +78,7 @@ class Level():
 
     def addObjectAt(self, obj):
         if self.map.isWalkable(obj.x,obj.y):
-            self.addObject(obj)
+            self.addObjectOnMap(obj)
         else:
             print("not walkable {} {}".format(obj.x,obj.y))
     

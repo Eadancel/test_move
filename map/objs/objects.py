@@ -20,10 +20,11 @@ class Objects(pygame.sprite.Sprite):
     STATUS_TOBE_SERVED = 5
     STATUS_READY = 6
 
-    def __init__(self, x, y, o_type, pathImgs, group):
+    def __init__(self, x, y, o_type, pathImgs, group,drawOn=(0,0)):
         super().__init__(group)
         self.x = x
         self.y = y
+        self.drawOn = drawOn
         self.zLevel = 0
         self.type = o_type
         self.imgs = []
@@ -33,14 +34,15 @@ class Objects(pygame.sprite.Sprite):
         for pi in pathImgs:
             self.imgs.append(pygame.image.load(os.path.join("game_assets", pi)))
 
-    def update(self, level, dt):
-        self.image = self.imgs[self.status]
-        self.rect = self.image.get_rect(
-            topleft=(
-                level.map.convertXGridToPX(self.x),
-                level.map.convertYGridToPX(self.y),
+    def update(self,level:None, dt:None):
+
+        if not self.grabbed:
+            self.image = self.imgs[self.status]
+            self.rect = self.image.get_rect(
+                topleft=(
+                    self.drawOn
+                )
             )
-        )
 
     def drawOn(self, win, xGrid, yGrid):
         win.blit(self.imgs[self.status], (xGrid, yGrid))
@@ -52,16 +54,15 @@ class Objects(pygame.sprite.Sprite):
         return None
 
 class Container(Objects):
-    def __init__(self,x,y,group, images, type, name, pos):
-        super().__init__(x, y, type, [], group)
+    def __init__(self,obj,group):
+        super().__init__(obj.get("stGridx"), obj.get("stGridy"), obj.get("type"), [], group,obj.get("drawOn"))
         self.objs = []
         self.limit_obj = 1
         self.status = Objects.STATUS_NORMAL
-        self.container_type = name
-        self.imgs = images
-        self.pos = pos
-        self.pos_in = (x,y)  # position where Persons need to go to insert new obj to container
-        self.pos_out = (x,y) #  position where Persons need to go to take a new obj to container
+        self.container_type = obj.get("name")
+        self.imgs = [obj.get("image")]
+        self.pos_in = obj.get("pos_in")  # position where Persons need to go to insert new obj to container
+        self.pos_out = obj.get("pos_out") #  position where Persons need to go to take a new obj to container
     def checkAvailableSlot(self):
         return self.limit_obj-len(self.objs)>=1
 
@@ -76,11 +77,8 @@ class Container(Objects):
         print(f"remove {obj}")
         self.objs.remove(obj)
     
-    def update(self, level, dt):
-        if not self.grabbed:
-            self.image = self.imgs[self.status]
-            self.rect = self.image.get_rect(topleft=(self.pos))
-        debug(f"hola.{len(self.objs)}")
+    def update(self,level, dt):
+        super().update(level, dt)
         offset=0
         for o in self.objs:
             o.zLevel = self.zLevel+1
@@ -96,19 +94,19 @@ class Garbage(Objects):
 
     def __init__(self, x, y, group):
         super().__init__(
-            x, y, "garbage", ["Tiles/tile_0307.png", "Tiles/tile_0307.png", "Tiles/tile_0307.png"], group
+            x, y, "garbage", 
+            ["Tiles/tile_0307.png", "Tiles/tile_0307.png", "Tiles/tile_0307.png"], 
+            group
         )
+        self.update(None, None)
         self.task = self.getTask()
 
-    def update(self, level, dt):
-        if not self.grabbed:
-            self.image = self.imgs[self.status]
-            self.rect = self.image.get_rect(
-                topleft=(
-                    level.map.convertXGridToPX(self.x),
-                    level.map.convertYGridToPX(self.y),
-                )
-            )
+    # def update(self):
+    #     if not self.grabbed:
+    #         self.image = self.imgs[self.status]
+    #         self.rect = self.image.get_rect(
+    #             topleft=(self.drawOn)
+    #         )
 
     def getTask(self):
         if self.status == Drink.STATUS_NORMAL:
@@ -123,9 +121,9 @@ class Garbage(Objects):
 
 class SlotMachine(Objects):
 
-    def __init__(self, x, y, group, images):
-        super().__init__(x, y, "gambling", [], group)
-        self.imgs = images
+    def __init__(self,obj, group):
+        super().__init__(obj.get("stGridx"), obj.get("stGridy"), "gambling", [], group,obj.get("drawOn"))
+        self.imgs = [obj.get("image")]
         self.cost = 100
         self.profit = [0, 1, 5, 20, 50, 100]
         self.luck = [90, 5, 2, 1, 0.07, 0.03]
@@ -145,37 +143,34 @@ class SlotMachine(Objects):
 
 
 class Machine(Objects):
-    def __init__(self, x, y, group, images, type, name, pos):
-        super().__init__(x, y, type, [], group)
-        self.type = type
+    def __init__(self, obj, group):
+        super().__init__(obj.get("stGridx"), obj.get("stGridy"), obj.get("type"), [], group,obj.get("drawOn"))
         self.available = True
-        self.machine_type = name
-        self.imgs = images
+        self.machine_type = obj.get("name")
+        self.imgs = [obj.get("image")]
         self.task = self.getTask()
-        self.pos = pos
-        self.offset_prod = (0,0)
-
+        self.offset_prod = obj.get("offset_prod")
+        self.offset = obj.get("offset")
     def getTask(self):
         return None
 
-    def update(self, level, dt):
-        if not self.grabbed:
-            self.image = self.imgs[self.status]
-            self.rect = self.image.get_rect(topleft=(self.pos))
+    # def update(self, level, dt):
+        # if not self.grabbed:
+        #     self.image = self.imgs[self.status]
+        #     self.rect = self.image.get_rect(topleft=(self.pos))
 
     def getSpot(self):
-        return (self.x, self.y)
+        return (self.x + self.offset[0], self.y+self.offset[1])
 
     def getNewObj(self, group, delivery, serveOn):
-        return Drink(self.x+self.offset_prod[0], self.x+self.offset_prod[1],self.machine_type, group, delivery, serveOn)
+        return Drink(self.x+self.offset_prod[0], self.y+self.offset_prod[1],self.machine_type, group, delivery, serveOn)
 
 
 class Sofa(Objects):
 
-    def __init__(self, x, y, group, images, type):
-        super().__init__(x, y, type, [], group)
-        self.type = type
-        self.imgs = images
+    def __init__(self,obj, group):
+        super().__init__(obj.get("stGridx"), obj.get("stGridy"),obj.get("type"), [], group,obj.get("drawOn"))
+        self.imgs = [obj.get("image")]
         self.task = self.getTask()
 
     def getTask(self):
@@ -198,6 +193,7 @@ class Drink(Objects):
                 "hotel/objs/bar/drink_3.png",
             ],
             group,
+            (0,0)
         )
         self.status = Drink.STATUS_TO_DELIVERY
         self.cost = 100

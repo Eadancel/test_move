@@ -1,5 +1,6 @@
 from collections import deque
-
+from typing import List
+import ast
 import pygame
 import pytmx
 
@@ -12,13 +13,13 @@ class TiledMap:
 
     def __init__(self, pathMap):
         self.gameMap = pytmx.load_pygame(pathMap, pixelalpha=True)
+        self.xGridSize = self.gameMap.width
+        self.yGridSize = self.gameMap.height
+        self.tilewidth = self.gameMap.tilewidth
+        self.tileheight = self.gameMap.tileheight
         self.mapwidth = self.gameMap.tilewidth * self.gameMap.width
         self.mapheight = self.gameMap.tileheight * self.gameMap.height
-
-        self.walkableTiles = [
-            [0 for col in range(self.gameMap.width)]
-            for row in range(self.gameMap.height)
-        ]
+        self.objs_layer = {}
 
     def render(self, surface):
         for layer in self.gameMap.layers:
@@ -29,41 +30,35 @@ class TiledMap:
                             print(f"{gid=}")
                         tile = self.gameMap.get_tile_image_by_gid(gid)
                         if tile:
-                            surface.blit(
-                                tile,
-                                (
-                                    x * self.gameMap.tilewidth,
-                                    y * self.gameMap.tileheight,
-                                ),
-                            )
-                # else:
-                #     self.zones[layer.name]=deque([])
-                #     for x, y, gid in layer:
-                #         if gid!=0:
-                #             self.zones[layer.name].append((x,y))
+                            surface.blit(tile,(x * self.gameMap.tilewidth, y * self.gameMap.tileheight))
+            if isinstance(layer,pytmx.TiledObjectGroup):
+                objs= []
+                for obj in layer:
+                    offset = ast.literal_eval(str(obj.properties.get("offset","(0,0)")))if str(obj.properties.get("offset")) else (0,0)
+                    offset_prod = ast.literal_eval(str(obj.properties.get("offset_prod","(0,0)")))if str(obj.properties.get("offset_prod"))else (0,0)
+                    pos_in =  ast.literal_eval(obj.properties.get("spot_in","(0,0)")) if str(obj.properties.get("spot_in"))!="" else (0,0)
+                    pos_out = ast.literal_eval(obj.properties.get("spot_out","(0,0)"))if str(obj.properties.get("spot_out"))!="" else(0,0)
 
-        for obj in self.gameMap.get_layer_by_name("walkable_path") + self.gameMap.get_layer_by_name("zones"):
-            (xGrid_st, yGrid_st) = (
-                self.convertPXToXGrid(obj.x),
-                self.convertPXToYGrid(obj.y),
-            )
-            (xGrid_end, yGrid_end) = (
-                self.convertPXToXGrid(obj.x + obj.width),
-                self.convertPXToYGrid(obj.y + obj.height),
-            )
-            for iX in range(xGrid_st, xGrid_end):
-                for iY in range(yGrid_st, yGrid_end):
-                    if obj.type == "walkable_path":
-                        self.walkableTiles[iY][iX] = 1
-                    if obj.type not in self.zones.keys():
-                        self.zones[obj.type] = deque([])
-                    self.zones[obj.type].append((iX, iY))
-                    # { pos : (), in:(), out:()}
-                    # or
-                    # offset[obj.type] = {in:(), out:()}
+                    objs.append({
+                        "name" : obj.name,
+                        "type" : obj.type,
+                        "drawOn" : (obj.x,obj.y),
+                        "stGridx" : self.convertPXToXGrid(obj.x),
+                        "stGridy" : self.convertPXToXGrid(obj.y),
+                        "endGridx" : self.convertPXToXGrid(obj.x+obj.width),
+                        "endGridy" : self.convertPXToXGrid(obj.y+obj.height),
+                        "image"   : obj.image,
+                        "properties" : obj.properties,
+                        "offset" : offset,
+                        "offset_prod" : offset_prod,
+                        "pos_in" : pos_in,
+                        "pos_out" : pos_out,
 
-        print("h{} w{}".format(len(self.walkableTiles), len(self.walkableTiles[0])))
-        # print(self.walkableTiles)
+                    })
+                self.objs_layer[layer.name]=objs
+    def get_objs_by_layer(self, layer_name):
+        layer=self.gameMap.get_layer_by_name(layer_name)
+        return layer
 
     def get_tile_from_img(self, pos: tuple, img):
         x = pos[0]

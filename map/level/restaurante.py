@@ -14,7 +14,7 @@ from people.people import *
 from people.worker import Worker
 from settings import *
 
-CREATE_NEW_CUSTOMER = False 
+CREATE_NEW_CUSTOMER = True 
 
 
 class LevelRestaurante(Level):
@@ -41,53 +41,33 @@ class LevelRestaurante(Level):
 
         # Sofas layer "sofa"
         try:
-            for obj in self.bkgmap.gameMap.get_layer_by_name("sofas"):
+            for sofa in self.map.get_objs_per_layer("sofas"):
                 # print(dir(obj))
-                xGrid = self.map.convertPXToXGrid(obj.x)
-                yGrid = self.map.convertPXToYGrid(obj.y)
-                self.addObject(
-                    Sofa(xGrid, yGrid, self.all_sprites, [obj.image], obj.type)
-                )
+                # xGrid = self.map.convertPXToXGrid(obj.x)
+                # yGrid = self.map.convertPXToYGrid(obj.y)
+                self.addObject(Sofa(sofa,self.all_sprites))
         except:
             print("Error in Sofa")
+
+        
+        # SlotMachine
         try:
-            for obj in self.bkgmap.gameMap.get_layer_by_name("games"):
-                xGrid = self.map.convertPXToXGrid(obj.x)
-                yGrid = self.map.convertPXToYGrid(obj.y)
-                self.addObject(SlotMachine(xGrid, yGrid, self.all_sprites, [obj.image]))
+            for slot in self.map.get_objs_per_layer("games"):
+                # xGrid = self.map.convertPXToXGrid(obj.x)
+                # yGrid = self.map.convertPXToYGrid(obj.y)
+                self.addObject(SlotMachine(slot, self.all_sprites))
         except:
             print("Error in Games")
 
-        for obj in self.bkgmap.gameMap.get_layer_by_name("drinks"):
+        for obj in self.map.get_objs_per_layer("drinks"):
 
-            if obj.type == "machine":
-                if str(obj.properties.get("offset")):
-                    offset = ast.literal_eval(str(obj.properties.get("offset")))
-                else:
-                    offset = (0, 0)
-                if str(obj.properties.get("offset_prod")):
-                    offset_prod = ast.literal_eval(str(obj.properties.get("offset_prod")))
-                else:
-                    offset_prod = (0, 0)
-
-                x = self.map.convertPXToXGrid(obj.x) + offset[0]
-                y = self.map.convertPXToYGrid(obj.y) + offset[1]
-                machine = Machine( x, y, self.all_sprites, [obj.image], obj.type, obj.name, (obj.x, obj.y))
-                machine.offset_prod=offset_prod
-                self.addMachine(machine)
-            if obj.type == "container":
-                x = self.map.convertPXToXGrid(obj.x)
-                y = self.map.convertPXToYGrid(obj.y)
-                container = Container(x,y,self.all_sprites, [obj.image], obj.type, obj.name, (obj.x, obj.y))
-                if str(obj.properties.get("spot_in"))!="":
-                    container.pos_in =  ast.literal_eval(obj.properties.get("spot_in"))
-                
-                if str(obj.properties.get("spot_out"))!="":
-                    container.pos_out = ast.literal_eval(obj.properties.get("spot_out"))
-                self.addContainer(container)
+            if obj.get("type") == "machine":
+                self.addMachine(Machine(obj, self.all_sprites))
+            if obj.get("type") == "container":
+                self.addContainer(Container(obj,self.all_sprites))
 
         # self.addObject(Sofa(42, 15, self.all_sprites))
-        self.addObject(Garbage(52, 10, self.all_sprites))
+        self.addObjectOnMap(Garbage(52, 10, self.all_sprites))
         # self.addObject(Drink(52,19, self.all_sprites))
 
     def addMachine(self,machine ):
@@ -139,7 +119,7 @@ class LevelRestaurante(Level):
             yGrid = self.map.convertPXToYGrid(relative_pos[1])
             print(f"adding at {xGrid},{yGrid}    {pos=}  {relative_pos=}")
             if self.map.isWalkable(xGrid, yGrid):
-                self.addObject(Garbage(xGrid, yGrid, self.all_sprites))
+                self.addObjectOnMap(Garbage(xGrid, yGrid, self.all_sprites))
         elif event.type == pygame.MOUSEBUTTONUP and event.button == RIGHT:
             pos = pygame.mouse.get_pos()
             relative_pos = self.all_sprites.relaPosZoom(pos)
@@ -162,12 +142,13 @@ class LevelRestaurante(Level):
                     if p.gotGarbage():
                         if self.map.isWalkable(p.x, p.y):
                             # self.addGarbage(p.x,p.y)
-                            self.addObject(Garbage(p.x, p.y + 1, self.all_sprites))
+                            print(f"adding customer garbagfe at {p.x},{p.y+1} ")
+                            self.addObjectOnMap(Garbage(p.x, p.y + 1, self.all_sprites))
                         else:
-                            print("not walkable gargabe".format(p.x, p.y))
+                            print("not walkable gargabe {} {}".format(p.x, p.y))
 
     def update(self, dt):
-
+        super().update(dt)
         self.checkPendingOrders()
         for p in self.peoples:
             if p.status == People.STATUS_LEAVING:
@@ -186,7 +167,8 @@ class LevelRestaurante(Level):
         self.peoples.append(Customer(x, y, f"Customer {self.num_customer}", self))
 
     def turnIntoGarbage(self, obj):
-        self.addObject(Garbage(obj.x, obj.y, self.all_sprites))
+        print(f"turning into garbage {obj.x=} {obj.y=}")
+        self.addObjectOnMap(Garbage(obj.x, obj.y, self.all_sprites))
         self.removeObj(obj)
 
     def createOrderDrink(self, serveOn, type):
@@ -203,10 +185,7 @@ class LevelRestaurante(Level):
             if machine:
                 if cont_delivery:
                     if cont_serveOn :
-                        #newZone = f"Order {serveOn}"
-                        #if newZone not in self.map.zones.keys():
-                        #    self.map.zones[newZone] = deque([])
-                        #    self.map.zones[newZone].append(serveOn)
+                        print("preparing drink")
                         self.addTask(
                             PrepareDrink(machine, "prepare_drink", 25, cont_delivery, cont_serveOn)
                         )
