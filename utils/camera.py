@@ -1,7 +1,5 @@
 import pygame
 
-from debug import debug
-from map.objs.objects import Sofa
 
 class CameraGroup(pygame.sprite.Group):
     def __init__(self, ground_surf):
