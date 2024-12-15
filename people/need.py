@@ -1,7 +1,6 @@
 import pygame
 import random
 
-from map.action import Action
 class Need():
     STATUS_INACTIVE=0
     STATUS_ACTIVE=1
@@ -38,7 +37,7 @@ class Need():
         pygame.draw.rect(win, (255,0,0), (x, y, int(self.percent()/100 * 16), 5))
 
     def isSolved(self):
-        pass
+        return self.value<=0
     def percent(self):
         return min(self.value/self.threshold * 100, 100)
     
@@ -51,8 +50,6 @@ class NeedThirst(Need):
         self.adding_sec = 2
         self.threshold = 100
         self.needsMoney = True
-    def isSolved(self):
-        return self.value<=0
 
 
 class NeedGambling(Need):
@@ -64,8 +61,6 @@ class NeedGambling(Need):
         self.adding_sec = 2
         self.threshold = 100
         self.needsMoney = True
-    def isSolved(self):
-        return self.value<=0
     
 class NeedCleaning(Need):
     def __init__(self):
@@ -75,9 +70,6 @@ class NeedCleaning(Need):
         self.increment = 50
         self.adding_sec = 1
         self.threshold = 100
-    
-    def isSolved(self):
-        return self.value<=0
 
 class NeedResting(Need):
     def __init__(self, increment):
@@ -87,8 +79,6 @@ class NeedResting(Need):
         self.increment = increment
         self.adding_sec = 5
         self.threshold = 100
-    def isSolved(self):
-        return self.value<=0
 
 class NeedPrepare(Need):
     def __init__(self):
@@ -99,8 +89,6 @@ class NeedPrepare(Need):
         self.adding_sec = 1
         self.threshold = 100
     
-    def isSolved(self):
-        return self.value<=0
 
 class NeedServing(Need):
     def __init__(self):
@@ -111,5 +99,3 @@ class NeedServing(Need):
         self.adding_sec = 1
         self.threshold = 100
     
-    def isSolved(self):
-        return self.value<=0
