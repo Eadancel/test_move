@@ -1,11 +1,6 @@
 import pygame
-import os
 from settings import *
-from map.tiledMap import TiledMap
 from map.map import Map
-from people.people import People
-from people.worker import Worker
-from people.customer import Customer
 from collections import deque
 from debug import debug
 from utils.camera import CameraGroup

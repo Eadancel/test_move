@@ -1,4 +1,3 @@
-import ast
 import random
 
 import pygame
@@ -11,7 +10,6 @@ from people.bartender import Bartender
 from people.cleaner import Cleaner
 from people.customer import Customer
 from people.people import *
-from people.worker import Worker
 from settings import *
 
 CREATE_NEW_CUSTOMER = True 
