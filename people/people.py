@@ -37,6 +37,7 @@ class People(pygame.sprite.Sprite):
         self.game = level
         self.map = level.map
         self.zLevel = 0
+        #TODO solved naming
         self.xGrid = self.map.convertXGridToPX(x)
         self.yGrid = self.map.convertYGridToPX(y)
         self.visible = True
