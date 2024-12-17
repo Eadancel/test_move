@@ -80,6 +80,15 @@ class NeedResting(Need):
         self.adding_sec = 5
         self.threshold = 100
 
+class NeedRestCustomer(Need):
+    def __init__(self, increment):
+        super().__init__()
+        self.value = 0
+        self.name = "customer_resting"
+        self.increment = increment
+        self.adding_sec = 5
+        self.threshold = 100
+        self.needsMoney = False
 class NeedPrepare(Need):
     def __init__(self):
         super().__init__()

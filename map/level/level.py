@@ -1,4 +1,5 @@
 import pygame
+import json
 from settings import *
 from map.map import Map
 from collections import deque
@@ -14,7 +15,7 @@ class Level():
         self.displayRunning = True
         self.display_surface = pygame.display.get_surface()
         self.map = Map(pathMap)
-        self.info=""
+        self.stage={}
         self.paused = False
         self.all_sprites = CameraGroup(self.map.map_img)
         self.peoples = []
@@ -28,7 +29,12 @@ class Level():
             self.all_sprites.custom_draw()
         else:
             debug("PAUSED")
-        self.info = f"People: {len(self.peoples)} Task Cleaning: {len(self.tasks.get('staff_resting',{}))} ZoneGame:{len(self.tasks.get('gambling',{}))} Objects: {len(self.objects)}" 
+        self.stage = {"People": len(self.peoples), 
+                      "Staf Resting": len(self.tasks.get('staff_resting',{})),
+                      "Task Cleaning": len(self.tasks.get('cleaning',{})),
+                      "ZoneGame": len(self.tasks.get('gambling',{})), 
+                      "Objects":  len(self.objects)}
+        # self.info = json.dumps(self.stage, indent=2)
     def input(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:

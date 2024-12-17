@@ -16,8 +16,8 @@ CREATE_NEW_CUSTOMER = True
 
 
 class LevelRestaurante(Level):
-    teAddCustomer = pygame.USEREVENT + 1
-    teCheckingGarbage = pygame.USEREVENT + 2
+    teAddCustomer = pygame.USEREVENT + 100
+    teCheckingGarbage = pygame.USEREVENT + 200
     
     def __init__(self):
         super().__init__(maps_tmx["restaurante"])
@@ -153,6 +153,10 @@ class LevelRestaurante(Level):
                 print(f"removing customer {p.id}")
                 self.peoples.remove(p)
                 p.kill()
+        self.stage['MoneySlot']=0
+        for m in self.objects:
+            if isinstance(m,SlotMachine):
+                self.stage['MoneySlot']+=m.money
 
     def addWorker(self, x, y, id):
         self.peoples.append(Cleaner(x, y, id, self))

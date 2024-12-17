@@ -6,7 +6,7 @@ from map.task import Task, LeavingGameTask, WanderTask
 from map.action import Action
 from .people import People
 import random
-from people.need import Need, NeedGambling, NeedThirst
+from people.need import Need, NeedGambling, NeedRestCustomer, NeedThirst
     # DIREC_MOVING_STAY = 0
     # DIREC_MOVING_UP = 1
     # DIREC_MOVING_DOWN = 2
@@ -33,7 +33,8 @@ class Customer (People):
         self.load_img_ani(img_matrix,img_tileset)
         
         self.needs = {"thirst": NeedThirst(), 
-                      "gambling": NeedGambling()}
+                      "gambling": NeedGambling(),
+                      "customer_resting" : NeedRestCustomer(random.randint(1,15))}
 
     def getNextTask(self):
         super().getNextTask()
@@ -59,19 +60,20 @@ class Customer (People):
     def working(self): 
         value = self.current_action["value"]
         need = self.current_action["need"]
-        addGarba = self.current_action["addGarba"]
+        addGarba = self.current_action.get("addGarba",1)
+        ganancia=0
         if self.needs[need].needsMoney:
             if self.money>0:
                 if self.current_action["type"]==Action.TYPE_TASKWORK_OBJ:
                     ganancia = self.current_action["obj"].workOnObj()            
                     self.money+=ganancia
-                    self.needs[need].doDecrement(value * (2 if ganancia>0 else 1))
             else:
                 self.status=People.STATUS_IDLE
                 self.popup_status.set_text("Leaving...")
                 self.assignTask(self.getLeavingTask())
                 return
 
+        self.needs[need].doDecrement(value * (2 if ganancia>0 else 1))
         self.garbage+=random.randint(1,addGarba)
 
         if self.needs[need].isSolved():

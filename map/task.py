@@ -198,7 +198,9 @@ class MovetoObjWorkOffset(Task):
                     "velocity": 1.1,
                     "y": obj.y + offset[1],
                 },
-                {"type": Action.TYPE_TASKWORK, "value": value},
+                {"type": Action.TYPE_TASKWORK,
+                 "need": need,
+                 "value": value},
                 {"type": Action.TYPE_RESTORE_TASK, "obj": obj},
             ]
         )

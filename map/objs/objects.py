@@ -119,6 +119,7 @@ class SlotMachine(Objects):
 
     def __init__(self,obj, group):
         super().__init__(obj.get("stGridx"), obj.get("stGridy"), "gambling", [], group,obj.get("drawOn"))
+        self.money=5000
         self.imgs = [obj.get("image")]
         self.cost = 100
         self.profit = [0, 1, 5, 20, 50, 100]
@@ -133,9 +134,11 @@ class SlotMachine(Objects):
         luck = self.luck
         cost = self.cost
         ganancia = random.choices(profit, luck, k=1)[0] * cost
+        net = ganancia - cost
+        self.money += - net
         if ganancia > 0:
             print(f"{ganancia=}")
-        return ganancia - cost
+        return net
 
 
 class Machine(Objects):
@@ -170,7 +173,7 @@ class Sofa(Objects):
         self.task = self.getTask()
 
     def getTask(self):
-        return MovetoObjWorkOffset(self, self.type, 40, (0, 1))
+        return MovetoObjWorkOffset(self, self.type, 20, (0, 1))
 
 
 class Drink(Objects):
