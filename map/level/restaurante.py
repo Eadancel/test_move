@@ -40,9 +40,6 @@ class LevelRestaurante(Level):
         # Sofas layer "sofa"
         try:
             for sofa in self.map.get_objs_per_layer("sofas"):
-                # print(dir(obj))
-                # xGrid = self.map.convertPXToXGrid(obj.x)
-                # yGrid = self.map.convertPXToYGrid(obj.y)
                 self.addObject(Sofa(sofa,self.all_sprites))
         except:
             print("Error in Sofa")
@@ -51,8 +48,6 @@ class LevelRestaurante(Level):
         # SlotMachine
         try:
             for slot in self.map.get_objs_per_layer("games"):
-                # xGrid = self.map.convertPXToXGrid(obj.x)
-                # yGrid = self.map.convertPXToYGrid(obj.y)
                 self.addObject(SlotMachine(slot, self.all_sprites))
         except:
             print("Error in Games")
