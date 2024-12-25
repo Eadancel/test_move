@@ -1,7 +1,8 @@
 import os
 import random
+from typing import Any, Dict
 import pygame
-
+from pygame.rect import Rect
 from map.task import (CleanObjectRecoverZone, MoveConsumeObjMoney, MoveObjToContainer,
                       MovetoObjWorkOffset, MovetoZoneTaskTakeRelease,MoveObjFromContainerToContainer,
                       MoveWorkObjMoney)
@@ -30,6 +31,9 @@ class Objects(pygame.sprite.Sprite):
         self.grabbed = False
         self.visible = True
         self.status = Objects.STATUS_NORMAL
+        self.stage : Dict[str, Any] = {
+            "type":self.type
+        }
         for pi in pathImgs:
             self.imgs.append(pygame.image.load(os.path.join("game_assets", pi)))
 
@@ -46,11 +50,20 @@ class Objects(pygame.sprite.Sprite):
     def drawOn(self, win, xGrid, yGrid):
         win.blit(self.imgs[self.status], (xGrid, yGrid))
 
-    def workOnObj(self):
+    def workOnObj(self)->Any:
         pass
+
+    def get_rect(self)->Rect:
+        return self.rect
 
     def getCurrentZone(self):
         return None
+
+    def get_tooltip(self):
+        return str(self.stage)
+
+    def get_stage(self):
+        return self.stage
 
 class Container(Objects):
     def __init__(self,obj,group):
@@ -119,7 +132,11 @@ class SlotMachine(Objects):
 
     def __init__(self,obj, group):
         super().__init__(obj.get("stGridx"), obj.get("stGridy"), "gambling", [], group,obj.get("drawOn"))
-        self.money=5000
+        # self.money=5000
+        # self.times_used=0
+        self.stage['id']="SlotMachine"
+        self.stage['money']=5000
+        self.stage['times_used']=0
         self.imgs = [obj.get("image")]
         self.cost = 100
         self.profit = [0, 1, 5, 20, 50, 100]
@@ -135,15 +152,17 @@ class SlotMachine(Objects):
         cost = self.cost
         ganancia = random.choices(profit, luck, k=1)[0] * cost
         net = ganancia - cost
-        self.money += - net
+        self.stage['money'] += - net
         if ganancia > 0:
             print(f"{ganancia=}")
+        self.stage['times_used']+=1
         return net
 
 
 class Machine(Objects):
     def __init__(self, obj, group):
         super().__init__(obj.get("stGridx"), obj.get("stGridy"), obj.get("type"), [], group,obj.get("drawOn"))
+        self.times_used=0
         self.available = True
         self.machine_type = obj.get("name")
         self.imgs = [obj.get("image")]

@@ -104,6 +104,9 @@ class People(pygame.sprite.Sprite):
                     self.popup_status.set_text("solving need...{}".format(k))
                     self.assignTask(task)
 
+    def get_rect(self):
+        return self.rect
+
     def do(self, dt):
         self.popup_status.set_text(f"{self.STATUS_DESCRIP[self.status]}")
         if self.status == People.STATUS_IDLE or (self.openForTask and len(self.tasks)>0):

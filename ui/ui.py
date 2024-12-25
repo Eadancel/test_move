@@ -39,3 +39,4 @@ class Label(Sprite):
             self._anchor = anchor
 
         self.rect = self.image.get_rect(**{self._anchor: self._position})
+

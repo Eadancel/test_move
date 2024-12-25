@@ -1,10 +1,14 @@
 import pygame
 import json
 from settings import *
+from typing import Dict, Any
 from map.map import Map
 from collections import deque
 from debug import debug
 from utils.camera import CameraGroup
+
+
+
 
 class Level():
     """ This is the class that makes the changes that you want to display. You would add most of your changes here.
@@ -15,7 +19,10 @@ class Level():
         self.displayRunning = True
         self.display_surface = pygame.display.get_surface()
         self.map = Map(pathMap)
-        self.stage={}
+        self.stage: Dict[str,Any]={}
+        self.tooltip : Dict[str, Any] = {
+            'visible': False
+        }
         self.paused = False
         self.all_sprites = CameraGroup(self.map.map_img)
         self.peoples = []
@@ -34,6 +41,7 @@ class Level():
                       "Task Cleaning": len(self.tasks.get('cleaning',{})),
                       "ZoneGame": len(self.tasks.get('gambling',{})), 
                       "Objects":  len(self.objects)}
+        self.tooltip['visible']=False
         # self.info = json.dumps(self.stage, indent=2)
     def input(self, event):
         if event.type == pygame.KEYDOWN:
@@ -45,7 +53,10 @@ class Level():
                 self.all_sprites.target_idx+=1
         if event.type == pygame.MOUSEWHEEL:
             self.all_sprites.zoom_scale +=event.y * 0.03 
-        
+    
+    def show_tooltip(self):
+        return self.tooltip['visible']
+
     def loadMap(self):
         #self.map_rect = self.map_img.get_rect()
         self.display_surface.blit(self.map.map_img,(0,0))
@@ -86,7 +97,6 @@ class Level():
     def getRelativeMousePos(self):
         pos = pygame.mouse.get_pos()
         return self.all_sprites.relaPosZoom(pos)
-
 
 class LabelManager():
     def __init__(self):

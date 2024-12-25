@@ -143,16 +143,30 @@ class LevelRestaurante(Level):
     def update(self, dt):
         super().update(dt)
         self.checkPendingOrders()
+        #Processing People
         for p in self.peoples:
             if p.status == People.STATUS_LEAVING:
                 print(f"removing customer {p.id}")
                 self.peoples.remove(p)
                 p.kill()
+            if p.get_rect().collidepoint(pygame.mouse.get_pos()):
+                print(f"Collide on {p.id}")
+
+        #Processing Machines
         self.stage['MoneySlot']=0
+
+        slot_stage=[]
         for m in self.objects:
             if isinstance(m,SlotMachine):
-                self.stage['MoneySlot']+=m.money
+                self.stage['MoneySlot']+=m.stage['money']
+                slot_stage.append(m.get_stage())
 
+            if m.get_rect().collidepoint(pygame.mouse.get_pos()):
+                self.tooltip['visible']=True
+                self.tooltip['html_text']=m.get_tooltip()
+                self.tooltip['rect'] = m.get_rect()
+
+        #self.stage["Slots_stage"] = slot_stage
     def addWorker(self, x, y, id):
         self.peoples.append(Cleaner(x, y, id, self))
 

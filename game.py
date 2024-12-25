@@ -36,6 +36,14 @@ class Game:
                                     wrap_to_height = True,
                                     anchors = {'right':'right',
                                                'top':'top'})
+        self.UItooltip = UITextBox(relative_rect=right_top,
+                                    visible=False,
+                                    html_text="Tooltip",
+                                    manager=self.ui_manager,
+                                    wrap_to_height = True,
+                                    anchors = {'right':'right',
+                                               'top':'top'})
+                                    
     def run(self):
         
         while True:
@@ -57,6 +65,13 @@ class Game:
 
             if (dt < 100 / FPS):  ## in case the window is freezing because is moving (Window behaviour)
                 self.level.update(dt)
+                if self.level.show_tooltip():
+                    mouse_pos = pygame.mouse.get_pos()
+                    self.UItooltip.set_position(mouse_pos)
+                    self.UItooltip.set_text(self.level.tooltip['html_text'])
+                    self.UItooltip.show()
+                else:
+                    self.UItooltip.hide()
                 self.ui_manager.update(dt)
             else:
                 print("drop frame")
