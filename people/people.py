@@ -1,5 +1,5 @@
 
-from typing import Dict
+from typing import Dict,Any
 import pygame
 import math
 from collections import deque
@@ -11,8 +11,9 @@ from utils.utils import Animation, extractTilesfromImage
 from debug import debug
 class People(pygame.sprite.Sprite):
     imgs = []
-    TYPE_WORKER = 1
-    TYPE_CUSTOMER = 2
+    TYPE_WORKER = 0
+    TYPE_CUSTOMER = 1
+    TYPE_DESCRIP = ['Worker','Customer']
 
     STATUS_IDLE = 0
     STATUS_GOINGTO = 1
@@ -56,8 +57,11 @@ class People(pygame.sprite.Sprite):
         self.direcMoving = People.ANIMA_MOVING_STAY
         self.obj=None
         self.default_Task = None
-        self.popup_status = Label(level.lm.labelCustomer, "", pygame.Color("black"), (self.xGrid-8, self.yGrid-10), "midleft")
-        self.popup_info = Label(level.lm.labelCustomer, "", pygame.Color("black"), (self.xGrid-8, self.yGrid-10), "midleft")
+        self.stage : Dict[str, Any] = {
+            "type":self.TYPE_DESCRIP[self.type_person]
+        }
+        # self.popup_status = Label(level.lm.labelCustomer, "", pygame.Color("black"), (self.xGrid-8, self.yGrid-10), "midleft")
+        # self.popup_info = Label(level.lm.labelCustomer, "", pygame.Color("black"), (self.xGrid-8, self.yGrid-10), "midleft")
         self.start_working_at=0
         self.intensity = 0
         self.needs:Dict[str, Need] = {}
@@ -77,19 +81,10 @@ class People(pygame.sprite.Sprite):
 
         self.image = self.animations[self.direcMoving].img()
         self.rect = self.image.get_rect(topleft=(round(self.xGrid), round(self.yGrid)-1))
-        #win.blit(self.img, (self.xGrid, self.yGrid - self.map.xGrid))
-        ##win.blit(self.img[1], (self.xGrid, self.yGrid))
 
         if self.obj!=None:
             self.obj.rect = self.obj.image.get_rect(topleft=(round(self.xGrid), round(self.yGrid+2)))
             #self.obj.drawOn(self.image,0, 16)
-        if self.popup_status is not None:
-            self.popup_status.set_position((0, 20), "midleft")
-            #self.popup_status.draw(win)
-        if self.popup_info is not None:
-            self.rect.height +=10
-            self.popup_info.set_position((0, 20), "midleft")
-            self.popup_info.draw(self.image)
         offset = 0
         self.rect.height +=5*len(self.needs)+5
         self.rect.y-=5*len(self.needs)+5
@@ -101,14 +96,16 @@ class People(pygame.sprite.Sprite):
             if n.check():
                 task = n.solve(self.game)
                 if task!=None : 
-                    self.popup_status.set_text("solving need...{}".format(k))
                     self.assignTask(task)
+        self.stage['status']=self.STATUS_DESCRIP[self.status]
 
     def get_rect(self):
         return self.rect
 
+    def get_tooltip(self):
+        return str(self.stage)
+
     def do(self, dt):
-        self.popup_status.set_text(f"{self.STATUS_DESCRIP[self.status]}")
         if self.status == People.STATUS_IDLE or (self.openForTask and len(self.tasks)>0):
             self.getNextTask()
         elif  self.status == People.STATUS_GOINGTO:

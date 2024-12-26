@@ -28,7 +28,7 @@ class Game:
                                              manager=self.ui_manager,
                                              anchors={'right':'right',
                                                     'bottom':'bottom'})
-        right_top = pygame.Rect(0,0,200,100)
+        right_top = pygame.Rect(0,0,250,100)
         right_top.topright = (-200,0) 
         self.label_status = UITextBox(relative_rect=right_top,
                                     html_text="Status",

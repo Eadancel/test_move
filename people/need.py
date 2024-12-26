@@ -35,7 +35,8 @@ class Need():
     def draw(self, win, x,y):
         pygame.draw.rect(win, (0,128,0), (x, y, 16, 5))
         pygame.draw.rect(win, (255,0,0), (x, y, int(self.percent()/100 * 16), 5))
-
+    def dopamine(self)->int:
+        return 0      
     def isSolved(self):
         return self.value<=0
     def percent(self):
@@ -50,6 +51,8 @@ class NeedThirst(Need):
         self.adding_sec = 2
         self.threshold = 100
         self.needsMoney = True
+    def dopamine(self)->int:
+        return -10
 
 
 class NeedGambling(Need):
@@ -61,6 +64,8 @@ class NeedGambling(Need):
         self.adding_sec = 2
         self.threshold = 100
         self.needsMoney = True
+    def dopamine(self)->int:
+        return 10
     
 class NeedCleaning(Need):
     def __init__(self):

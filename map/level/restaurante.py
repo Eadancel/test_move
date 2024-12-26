@@ -24,6 +24,7 @@ class LevelRestaurante(Level):
         self.lm = LabelManager()
         self.machines = {}
         self.containers = {}
+        self.happiness=100
         self.setup()
         self.pending_tasks=[]
     def setup(self):
@@ -123,7 +124,7 @@ class LevelRestaurante(Level):
             self.createOrderDrink((xGrid, yGrid), random.choice(["coffee","drink"]))
         elif event.type == LevelRestaurante.teAddCustomer:
             if (
-                random.randint(1, 10) > 2
+                random.randint(0, 10) < self.happiness  ## customer rate based on restaurante happiness
                 and len(self.peoples) < 50
                 and CREATE_NEW_CUSTOMER
             ):
@@ -144,14 +145,23 @@ class LevelRestaurante(Level):
         super().update(dt)
         self.checkPendingOrders()
         #Processing People
+        sum_frust=0
+        i=0
         for p in self.peoples:
-            if p.status == People.STATUS_LEAVING:
-                print(f"removing customer {p.id}")
-                self.peoples.remove(p)
-                p.kill()
+            if isinstance(p, Customer):
+                sum_frust += p.happiness
+                i+=1
+                if p.status == People.STATUS_LEAVING:
+                    print(f"removing customer {p.id}")
+                    self.peoples.remove(p)
+                    p.kill()
             if p.get_rect().collidepoint(pygame.mouse.get_pos()):
-                print(f"Collide on {p.id}")
-
+                self.tooltip['visible']=True
+                self.tooltip['html_text']=p.get_tooltip()
+                self.tooltip['rect'] = p.get_rect()
+        self.happiness = sum_frust/i if i>0 else 100
+        self.stage['happy avg'] = f"{self.happiness:.2f}"
+        self.stage['num customer'] = i
         #Processing Machines
         self.stage['MoneySlot']=0
 

@@ -153,8 +153,6 @@ class SlotMachine(Objects):
         ganancia = random.choices(profit, luck, k=1)[0] * cost
         net = ganancia - cost
         self.stage['money'] += - net
-        if ganancia > 0:
-            print(f"{ganancia=}")
         self.stage['times_used']+=1
         return net
 

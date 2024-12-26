@@ -24,6 +24,7 @@ class Customer (People):
     def __init__(self,x,y,id,level):
         super().__init__(x,y,id,People.TYPE_CUSTOMER,level)
         self.imgs = []
+        self.happiness = 100
         self.openForTask=True
         self.money=random.randint(1,5000)#+3000
         self.garbage = random.randint(1,5)
@@ -50,12 +51,17 @@ class Customer (People):
 
     def draw(self,win):
         super().draw(win)
-
-        self.popup_info.set_text(f"{self.money}")  
         
         #if self.money>0:
 
+    def calc_happynes_add(self, ganancia, need):
+        ## TODO Calculation of the frustration changes based on the ganacia compare with the current money
+        ## TODO If the amount earn is bigger than current money more happiness is gain.
+        ## the level can be influended by the un-solved needs.
+        ## Buying things is providing Happyness gain spending money 
 
+
+        return need.dopamine() * self.intensity
 
     def working(self): 
         value = self.current_action["value"]
@@ -63,15 +69,16 @@ class Customer (People):
         addGarba = self.current_action.get("addGarba",1)
         ganancia=0
         if self.needs[need].needsMoney:
-            if self.money>0:
+            if self.money>0 and self.happiness>0:
                 if self.current_action["type"]==Action.TYPE_TASKWORK_OBJ:
                     ganancia = self.current_action["obj"].workOnObj()            
                     self.money+=ganancia
             else:
                 self.status=People.STATUS_IDLE
-                self.popup_status.set_text("Leaving...")
                 self.assignTask(self.getLeavingTask())
                 return
+        else:
+            ganancia=1
 
         self.needs[need].doDecrement(value * (2 if ganancia>0 else 1))
         self.garbage+=random.randint(1,addGarba)
@@ -81,6 +88,16 @@ class Customer (People):
             self.needs[need].status=Need.STATUS_ACTIVE
         else:
             self.status=People.STATUS_WORKING
+        if self.money>0: ## Avoid DIV by zero
+            happy_incre =self.needs[need].dopamine()* ganancia / self.money * self.intensity
+        else:
+            happy_incre =1
+        print(f"{happy_incre=}  Customer : {self.id}")
+        self.happiness+= happy_incre       
+        self.stage['working on:']=need
+        self.stage['money']=self.money
+        self.stage['garbage']=self.garbage
+        self.stage['happiness']=f"{self.happiness:.2f}"
         
     def getLeavingTask(self):
         return LeavingGameTask("out")
